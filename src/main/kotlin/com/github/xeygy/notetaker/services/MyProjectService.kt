@@ -1,7 +1,7 @@
-package org.jetbrains.plugins.template.services
+package com.github.xeygy.notetaker.services
 
 import com.intellij.openapi.project.Project
-import org.jetbrains.plugins.template.MyBundle
+import com.github.xeygy.notetaker.MyBundle
 
 class MyProjectService(project: Project) {
 

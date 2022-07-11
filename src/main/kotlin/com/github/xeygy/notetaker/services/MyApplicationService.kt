@@ -1,6 +1,6 @@
-package org.jetbrains.plugins.template.services
+package com.github.xeygy.notetaker.services
 
-import org.jetbrains.plugins.template.MyBundle
+import com.github.xeygy.notetaker.MyBundle
 
 class MyApplicationService {
 
