@@ -49,5 +49,8 @@ public class MyToolWindow {
     public JPanel getContent() {
         return myToolWindowContent;
     }
+    public JPanel getContent2() {
+        return myToolWindowContent;
+    }
 
 }
