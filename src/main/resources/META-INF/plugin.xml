@@ -1,18 +1,12 @@
 <!-- Plugin Configuration File. Read more: https://plugins.jetbrains.com/docs/intellij/plugin-configuration-file.html -->
 <idea-plugin>
     <id>com.github.xeygy.notetaker</id>
-    <name>notetaker</name>
+    <name>Notetaker</name>
     <vendor>xeygy</vendor>
 
     <depends>com.intellij.modules.platform</depends>
 
     <extensions defaultExtensionNs="com.intellij">
-        <applicationService serviceImplementation="com.github.xeygy.notetaker.services.MyApplicationService"/>
-        <projectService serviceImplementation="com.github.xeygy.notetaker.services.MyProjectService"/>
+        <toolWindow factoryClass="org.intellij.sdk.toolWindow.MyToolWindowFactory" id="Notetaker" anchor="right"/>
     </extensions>
-
-    <applicationListeners>
-        <listener class="com.github.xeygy.notetaker.listeners.MyProjectManagerListener"
-                  topic="com.intellij.openapi.project.ProjectManagerListener"/>
-    </applicationListeners>
 </idea-plugin>
