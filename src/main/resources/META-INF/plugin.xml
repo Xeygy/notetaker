@@ -5,6 +5,7 @@
     <vendor>xeygy</vendor>
 
     <depends>com.intellij.modules.platform</depends>
+    <depends>com.intellij.java</depends>
 
     <extensions defaultExtensionNs="com.intellij">
         <toolWindow factoryClass="org.intellij.sdk.toolWindow.MyToolWindowFactory" id="Notetaker" anchor="right"/>
