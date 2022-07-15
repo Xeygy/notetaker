@@ -29,30 +29,10 @@ public class GoToProofOfConcept {
 
     public void goToClicked() {
         String def = textField1.getText(); //the function definition we're looking for
-        System.out.println(def);
-        JavaRecursiveElementVisitor visitor = new JavaRecursiveElementVisitor() {
-            @Override
-            public void visitMethod(PsiMethod method) {
-                super.visitMethod(method);
-                if (method.getName().equals(def)) {
-                    System.out.println("method: " + method);
-                    navigateToElement(method);
-                }
-            }
-        };
-        Processor processor = new Processor() {
-            @Override
-            public boolean process(Object o) {
-                if (o instanceof PsiFile) {
-                    ((PsiFile)o).accept(visitor);
-                }
-                return true;
-            }
-        };
 
+        FindMethodProcessor processor = new FindMethodProcessor(def);
         PsiSearchHelper searchHelper = PsiSearchHelper.getInstance(project);
         Module @NotNull [] modules = ModuleManager.getInstance(project).getModules();
-        System.out.println(modules.length);
         GlobalSearchScope scope = null;
         for (Module m : modules) {
             /* moduleScope is necessary (as opposed to projectScope or allScope)
@@ -63,6 +43,7 @@ public class GoToProofOfConcept {
         if (scope != null) {
             searchHelper.processAllFilesWithWord(def, scope, processor, true);
         }
+        processor.printFoundMethods();
     }
 
     /** sets the UI of the user to the location of the
