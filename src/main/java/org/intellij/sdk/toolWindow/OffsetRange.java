@@ -6,7 +6,7 @@ public class OffsetRange {
     private final int start;
     private final int end;
 
-    /** utility class for managing a range of numbers.
+    /** class for managing a range of numbers.
      * inclusive on both ends
      * start <= end
      * @param start the start of the range
