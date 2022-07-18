@@ -60,19 +60,53 @@ public class NoteToolWindow {
      * @return null if can't find content, else returns content
      */
     public String getContentInCurlyBraces(int start, int minContentLen, int maxContentLen) {
+        OffsetRange range = getBracedContentRange(start, minContentLen, maxContentLen);
+        try {
+            if (range != null) {
+                return doc.getText(range.getStart(), range.size());
+            } else {
+                return null;
+            }
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    public String getContentInRange(OffsetRange range) {
+        try {
+            return doc.getText(range.getStart(), range.size());
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    public OffsetRange getBracedContentRange(int start, int minContentLen, int maxContentLen) {
         int wordStart = start + 2;
         for (int currLen = minContentLen; currLen <= maxContentLen; currLen++) {
             try {
                 int closingBraceLoc = wordStart + currLen;
                 String test = doc.getText(closingBraceLoc, 1);
                 if (test.equals("}")) {
-                    return doc.getText(wordStart, currLen);
+                    return new OffsetRange(wordStart, closingBraceLoc - 1);
                 }
             } catch (Exception e) {
                 break;
             }
         }
         return null;
+    }
+
+    //TODO: nested curly braces?
+    public List<OffsetRange> getBracedContentRanges(int minContentLen, int maxContentLen) {
+        List<Integer> starts = getStartOfStrings("\\{");
+        ArrayList<OffsetRange> contentRanges = new ArrayList<>();
+        for (int start : starts) {
+            OffsetRange range = getBracedContentRange(start, minContentLen, maxContentLen);
+            if (range != null) {
+                contentRanges.add(range);
+            }
+        }
+        return contentRanges;
     }
 
     class NoteDocumentListener implements DocumentListener {
@@ -97,9 +131,10 @@ public class NoteToolWindow {
         public void mouseClicked(MouseEvent e) {
             Point mousePt = e.getPoint();
             int offset = NotePanel.viewToModel2D(mousePt);
-            List<Integer> starts = getStartOfStrings("\\{");
-            if (starts.contains(offset)) {
-                String def = getContentInCurlyBraces(offset, 1, 20);
+            List<OffsetRange> ranges = getBracedContentRanges(1, 20);
+            OffsetRange selectedRange = OffsetRange.getRangeWith(ranges, offset);
+            if (selectedRange != null) {
+                String def = getContentInRange(selectedRange);
                 FindMethodProcessor processor = new FindMethodProcessor(def);
                 processor.runProcessor(project);
                 processor.goToFoundMethods();
