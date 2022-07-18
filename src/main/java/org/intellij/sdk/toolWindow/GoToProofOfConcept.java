@@ -29,35 +29,14 @@ public class GoToProofOfConcept {
 
     public void goToClicked() {
         String def = textField1.getText(); //the function definition we're looking for
-
         FindMethodProcessor processor = new FindMethodProcessor(def);
-        PsiSearchHelper searchHelper = PsiSearchHelper.getInstance(project);
-        Module @NotNull [] modules = ModuleManager.getInstance(project).getModules();
-        GlobalSearchScope scope = null;
-        for (Module m : modules) {
-            /* moduleScope is necessary (as opposed to projectScope or allScope)
-                because it excludes libraries and dependencies from the search */
-             GlobalSearchScope tempScope = GlobalSearchScope.moduleScope(m);
-             scope = (scope == null) ? tempScope : tempScope.uniteWith(scope);
-        }
-        if (scope != null) {
-            searchHelper.processAllFilesWithWord(def, scope, processor, true);
-        }
+        processor.runProcessor(project);
         processor.printFoundMethods();
+        processor.goToFoundMethods();
     }
 
-    /** sets the UI of the user to the location of the
-     * PsiElement
-     * @param element element to navigate to
-     */
-    public void navigateToElement(PsiElement element) {
-        // code sourced from: https://intellij-support.jetbrains.com/hc/en-us/community/posts/206137479-Navigating-to-a-PsiElement
-        PsiElement navigationElement = element.getNavigationElement();
-        if (navigationElement instanceof Navigatable && ((Navigatable) navigationElement).canNavigate())
-        {
-            ((Navigatable) navigationElement).navigate(true);
-        }
-    }
+
+
 
     public JPanel getContent() {
         return goToContent;

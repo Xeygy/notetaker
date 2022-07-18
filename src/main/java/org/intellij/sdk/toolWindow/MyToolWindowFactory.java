@@ -47,7 +47,7 @@ public class MyToolWindowFactory implements ToolWindowFactory {
 //                        "}");
 
         for (int i = 1; i<= 2; i++) {
-            NoteToolWindow noteToolWindow = new NoteToolWindow(toolWindow);
+            NoteToolWindow noteToolWindow = new NoteToolWindow(toolWindow, project);
             Content noteTab = contentFactory.createContent(noteToolWindow.getContent(), "Notes"+i, false);
             cm.addContent(noteTab);
         }
