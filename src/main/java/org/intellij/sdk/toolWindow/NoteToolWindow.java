@@ -2,12 +2,13 @@ package org.intellij.sdk.toolWindow;
 
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.wm.ToolWindow;
+import com.thoughtworks.qdox.model.expression.Not;
 import jnr.ffi.annotations.In;
 
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
-import javax.swing.text.Document;
+import javax.swing.text.*;
 import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -18,16 +19,24 @@ public class NoteToolWindow {
     private JPanel NotePanelContent;
     private JScrollPane ScrollPane;
     private Project project;
-    private Document doc;
+    private StyledDocument doc;
     private DocumentParser docParser;
+    private Style linkStyle;
 
     private final int NAME_MIN_LEN = 1;
     private final int NAME_MAX_LEN = 20;
 
     public NoteToolWindow(ToolWindow toolWindow, Project project) {
-        doc = NotePanel.getDocument();
-        docParser = new DocumentParser(doc);
         this.project = project;
+        doc = NotePanel.getStyledDocument();
+        NotePanel.getText();
+
+        linkStyle = NotePanel.addStyle("Link Style", null);
+        StyleConstants.setForeground(linkStyle, new Color(128, 189, 255));
+        StyleConstants.setUnderline(linkStyle, true);
+        StyleConstants.setItalic(linkStyle, true);
+
+        docParser = new DocumentParser(doc);
         doc.addDocumentListener(new NoteDocumentListener());
         NotePanel.addMouseListener(new NoteMouseListener());
     }
@@ -39,6 +48,7 @@ public class NoteToolWindow {
 
     class NoteDocumentListener implements DocumentListener {
         public void insertUpdate(DocumentEvent e) {
+            styleLinks();
             System.out.println(e);
             List<Integer> starts = docParser.getStartOfStrings("\\{");
             for (int start : starts) {
@@ -53,8 +63,29 @@ public class NoteToolWindow {
         }
     }
 
-    class NoteMouseListener implements MouseListener {
+    /** Styling must be queued, else we get an exception & styling doesn't work.
+     * will detect all hyperlinks in the format and style them according to linkStyle
+     * code from: https://stackoverflow.com/questions/15206586/getting-attempt-to-mutate-notification-exception
+     */
+    private void styleLinks() {
+        Runnable doHighlight = new Runnable() {
+            @Override
+            public void run() {
+                List<OffsetRange> linkRanges = docParser.getBracedContentRanges(NAME_MIN_LEN, NAME_MAX_LEN);
+                for (OffsetRange range : linkRanges) {
+                    String linkText = docParser.getContentInRange(range);
+                    try {
+                        doc.setCharacterAttributes(range.getStart(), range.size(), linkStyle, false);
+                    } catch (Exception exception) {
+                        System.out.println(exception);
+                    }
+                }
+            }
+        };
+        SwingUtilities.invokeLater(doHighlight);
+    }
 
+    class NoteMouseListener implements MouseListener {
         @Override
         public void mouseClicked(MouseEvent e) {
             Point mousePt = e.getPoint();

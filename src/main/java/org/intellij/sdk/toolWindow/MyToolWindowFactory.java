@@ -33,9 +33,9 @@ public class MyToolWindowFactory implements ToolWindowFactory {
         ContentManager cm = toolWindow.getContentManager();
         ContentFactory contentFactory = ContentFactory.SERVICE.getInstance();
 
-        GoToProofOfConcept goToWindow = new GoToProofOfConcept(toolWindow, project);
-        Content content = contentFactory.createContent(goToWindow.getContent(), "Go to...", false);
-        cm.addContent(content);
+//        GoToProofOfConcept goToWindow = new GoToProofOfConcept(toolWindow, project);
+//        Content content = contentFactory.createContent(goToWindow.getContent(), "Go to...", false);
+//        cm.addContent(content);
 
 //        PsiFileFactory factory = PsiFileFactory.getInstance(project);
 //        PsiFile pf = factory.createFileFromText("test", Language.findLanguageByID("JAVA"),
