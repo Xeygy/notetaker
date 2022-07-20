@@ -18,7 +18,7 @@ import java.util.HashSet;
 public class FindMethodProcessor implements Processor {
 
     private final String methodName;
-
+    private String containingClass;
     private final HashSet<PsiMethod> foundMethods;
 
     /** a processor for PsiFiles that finds all instances
@@ -30,9 +30,14 @@ public class FindMethodProcessor implements Processor {
         this.foundMethods = new HashSet<>();
     }
 
+    public FindMethodProcessor(String containingClass, String methodName) {
+        this(methodName);
+        this.containingClass = containingClass;
+    }
+
     @Override
     public boolean process(Object o) {
-        FindMethodVisitor visitor = new FindMethodVisitor(methodName, foundMethods);
+        FindMethodVisitor visitor = new FindMethodVisitor(containingClass, methodName, foundMethods);
         if (o instanceof PsiFile) {
             ((PsiFile)o).accept(visitor);
         }

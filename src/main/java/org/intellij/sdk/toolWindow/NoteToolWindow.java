@@ -22,6 +22,7 @@ public class NoteToolWindow {
     private StyledDocument doc;
     private DocumentParser docParser;
     private Style linkStyle;
+    private Style defaultStyle;
 
     private final int NAME_MIN_LEN = 1;
     private final int NAME_MAX_LEN = 20;
@@ -31,6 +32,8 @@ public class NoteToolWindow {
         doc = NotePanel.getStyledDocument();
         NotePanel.getText();
 
+        //Text Styling
+        defaultStyle = NotePanel.getLogicalStyle();
         linkStyle = NotePanel.addStyle("Link Style", null);
         StyleConstants.setForeground(linkStyle, new Color(128, 189, 255));
         StyleConstants.setUnderline(linkStyle, true);
@@ -56,6 +59,7 @@ public class NoteToolWindow {
             }
         }
         public void removeUpdate(DocumentEvent e) {
+            styleLinks();
             System.out.println(e);
         }
         public void changedUpdate(DocumentEvent e) {
@@ -72,6 +76,10 @@ public class NoteToolWindow {
             @Override
             public void run() {
                 List<OffsetRange> linkRanges = docParser.getBracedContentRanges(NAME_MIN_LEN, NAME_MAX_LEN);
+
+                //clears styling first
+                doc.setCharacterAttributes(0, doc.getLength() + 1, defaultStyle, true);
+
                 for (OffsetRange range : linkRanges) {
                     String linkText = docParser.getContentInRange(range);
                     try {
@@ -94,7 +102,13 @@ public class NoteToolWindow {
             OffsetRange selectedRange = OffsetRange.getRangeWith(ranges, offset);
             if (selectedRange != null) {
                 String def = docParser.getContentInRange(selectedRange);
-                FindMethodProcessor processor = new FindMethodProcessor(def);
+                String[] signature = def.split("\\.");
+                FindMethodProcessor processor;
+                if (signature.length == 2) {
+                     processor = new FindMethodProcessor(signature[0], signature[1]);
+                } else {
+                    processor = new FindMethodProcessor(def);
+                }
                 processor.runProcessor(project);
                 processor.goToFoundMethods();
             }
