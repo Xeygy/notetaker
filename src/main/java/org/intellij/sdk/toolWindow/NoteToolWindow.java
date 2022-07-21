@@ -2,21 +2,28 @@ package org.intellij.sdk.toolWindow;
 
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.wm.ToolWindow;
-import com.thoughtworks.qdox.model.expression.Not;
-import jnr.ffi.annotations.In;
+import com.intellij.psi.PsiMethod;
 
+import javax.print.attribute.Attribute;
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
+import javax.swing.event.HyperlinkEvent;
+import javax.swing.event.HyperlinkListener;
 import javax.swing.text.*;
+import javax.swing.text.html.HTML;
+import javax.swing.text.html.HTMLEditorKit;
 import java.awt.*;
+import java.awt.event.ActionEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.util.Enumeration;
 import java.util.List;
 
 public class NoteToolWindow {
     private JTextPane NotePanel;
     private JPanel NotePanelContent;
+    private JCheckBox IsEditable;
     private JScrollPane ScrollPane;
     private Project project;
     private StyledDocument doc;
@@ -26,9 +33,29 @@ public class NoteToolWindow {
     private final int NAME_MIN_LEN = 1;
     private final int NAME_MAX_LEN = 20;
 
+    /** @see DocumentParser#getStartOfStrings(String)  getStart
+     * {@link FindMethodVisitor#visitMethod(PsiMethod)} */
     public NoteToolWindow(ToolWindow toolWindow, Project project) {
         this.project = project;
         doc = NotePanel.getStyledDocument();
+        IsEditable.addActionListener(e -> toggleEditability(e));
+        EditorKit k = new CustomHTMLEditorKit();
+        NotePanel.setEditorKit(k);
+
+        NotePanel.setText("<a loc-id=\"DocumentParser#getStartOfStrings(String)\" href=\"http://www.google.com/finance?q=NYSE:C\">Click this link</a>");
+        NotePanel.addHyperlinkListener(new HyperlinkListener() {
+            public void hyperlinkUpdate(HyperlinkEvent e) {
+                System.out.println("hyperlinkUpdate received");
+                if(e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
+                   AttributeSet attrs = e.getSourceElement().getAttributes();
+                   SimpleAttributeSet simpleAttributeSet = (SimpleAttributeSet) attrs.getAttribute(HTML.Tag.A);
+                   String locId = (String) simpleAttributeSet.getAttribute("loc-id");
+                   if (locId != null) {
+                       System.out.println(locId);
+                   }
+                }
+            }
+        });
         NotePanel.getText();
 
         linkStyle = NotePanel.addStyle("Link Style", null);
@@ -41,6 +68,15 @@ public class NoteToolWindow {
         NotePanel.addMouseListener(new NoteMouseListener());
     }
 
+    public void toggleEditability(ActionEvent e) {
+        NotePanel.setEditable(!NotePanel.isEditable());
+        if (NotePanel.isEditable()) {
+            System.out.println("Text now editable");
+        } else {
+            System.out.println("Text now not editable");
+        }
+    }
+
     public JPanel getContent() {
         return NotePanelContent;
     }
@@ -48,7 +84,6 @@ public class NoteToolWindow {
 
     class NoteDocumentListener implements DocumentListener {
         public void insertUpdate(DocumentEvent e) {
-            styleLinks();
             System.out.println(e);
             List<Integer> starts = docParser.getStartOfStrings("\\{");
             for (int start : starts) {
