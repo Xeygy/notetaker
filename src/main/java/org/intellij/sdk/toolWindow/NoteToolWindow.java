@@ -57,8 +57,9 @@ public class NoteToolWindow {
                    SimpleAttributeSet simpleAttributeSet = (SimpleAttributeSet) attrs.getAttribute(HTML.Tag.A);
                    String locId = (String) simpleAttributeSet.getAttribute("loc-id");
                    if (locId != null) {
-                       //gotten locId
-                       System.out.println(locId);
+                       FindMethodProcessor processor = new FindMethodProcessor(locId);
+                       processor.runProcessor(project);
+                       processor.goToFoundMethods();
                    }
                 }
             }
