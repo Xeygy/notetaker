@@ -3,6 +3,7 @@ package org.intellij.sdk.toolWindow;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.psi.PsiMethod;
+import com.thoughtworks.qdox.model.expression.Not;
 
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
@@ -21,7 +22,7 @@ public class NoteToolWindow {
     private JTextPane NotePanel;
     private JPanel NotePanelContent;
     private JCheckBox IsEditable;
-    private JButton EscHTMLButton;
+    private JButton EscLinkButton;
     private JScrollPane ScrollPane;
     private Project project;
     private final StyledDocument doc;
@@ -37,8 +38,12 @@ public class NoteToolWindow {
     public NoteToolWindow(ToolWindow toolWindow, Project project) {
         this.project = project;
         IsEditable.addActionListener(e -> toggleEditability(e));
+        EscLinkButton.addActionListener(e -> escapeLink(e));
         EditorKit k = new CustomHTMLEditorKit();
         NotePanel.setEditorKit(k);
+
+        //set notepanel text styling to intellij defaults
+        NotePanel.putClientProperty(JEditorPane.HONOR_DISPLAY_PROPERTIES, Boolean.TRUE);
         defaultStyle = NotePanel.getLogicalStyle();
 
         //NotePanel.setText("<a loc-id=\"DocumentParser#getStartOfStrings(String)\" href=\"http://www.google.com/finance?q=NYSE:C\">Click this link</a> aa");
@@ -179,6 +184,24 @@ public class NoteToolWindow {
             }
         }
         return 0;
+    }
+
+//currently just adds a space at the end of the link https://stackoverflow.com/a/12046827
+    public void escapeLink(ActionEvent e) {
+        int caretPos = NotePanel.getCaretPosition();
+
+        Element elem = doc.getParagraphElement(caretPos);
+
+        int pos = elem.getEndOffset() - 1;
+        int max = doc.getLength();
+        if (pos >= max) {
+            try {
+                doc.insertString(pos, " ", defaultStyle);
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        }
+        NotePanel.setCaretPosition(pos);
     }
 
 
