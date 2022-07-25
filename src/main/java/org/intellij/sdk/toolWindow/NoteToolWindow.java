@@ -86,27 +86,6 @@ public class NoteToolWindow {
         }
     }
 
-    /** Styling must be queued, else we get an exception & styling doesn't work.
-     * will detect all hyperlinks in the format and style them according to linkStyle
-     * code from: https://stackoverflow.com/questions/15206586/getting-attempt-to-mutate-notification-exception
-     */
-    private void styleLinks() {
-        Runnable doHighlight = new Runnable() {
-            @Override
-            public void run() {
-                List<OffsetRange> linkRanges = docParser.getBracedContentRanges(NAME_MIN_LEN, NAME_MAX_LEN);
-                for (OffsetRange range : linkRanges) {
-                    String linkText = docParser.getContentInRange(range);
-                    try {
-                        doc.setCharacterAttributes(range.getStart(), range.size(), defaultStyle, false);
-                    } catch (Exception exception) {
-                        System.out.println(exception);
-                    }
-                }
-            }
-        };
-        SwingUtilities.invokeLater(doHighlight);
-    }
 
     /** code taken from here: https://stackoverflow.com/questions/12035925/java-jeditorpane-hyperlink-wont-exit-tag */
     private void autoLink(DocumentEvent e) {
