@@ -48,21 +48,7 @@ public class NoteToolWindow {
 
         //NotePanel.setText("<a loc-id=\"DocumentParser#getStartOfStrings(String)\" href=\"http://www.google.com/finance?q=NYSE:C\">Click this link</a> aa");
 
-        NotePanel.addHyperlinkListener(new HyperlinkListener() {
-            public void hyperlinkUpdate(HyperlinkEvent e) {
-                System.out.println("hyperlinkUpdate received");
-                if(e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
-                   AttributeSet attrs = e.getSourceElement().getAttributes();
-                   SimpleAttributeSet simpleAttributeSet = (SimpleAttributeSet) attrs.getAttribute(HTML.Tag.A);
-                   String locId = (String) simpleAttributeSet.getAttribute("loc-id");
-                   if (locId != null) {
-                       FindMethodProcessor processor = new FindMethodProcessor(locId);
-                       processor.runProcessor(project);
-                       processor.goToFoundMethods();
-                   }
-                }
-            }
-        });
+        NotePanel.addHyperlinkListener(getLinkListener());
         doc = NotePanel.getStyledDocument();
         docParser = new DocumentParser(doc);
         doc.addDocumentListener(new NoteDocumentListener());
@@ -81,7 +67,7 @@ public class NoteToolWindow {
         return NotePanelContent;
     }
 
-
+    /** run the autoLink process every time the doc is updated */
     class NoteDocumentListener implements DocumentListener {
         public void insertUpdate(DocumentEvent e) {
             System.out.println(e);
@@ -121,6 +107,7 @@ public class NoteToolWindow {
         };
         SwingUtilities.invokeLater(doHighlight);
     }
+
     /** code taken from here: https://stackoverflow.com/questions/12035925/java-jeditorpane-hyperlink-wont-exit-tag */
     private void autoLink(DocumentEvent e) {
         Runnable autoLink = new Runnable() {
@@ -186,7 +173,7 @@ public class NoteToolWindow {
         return 0;
     }
 
-//currently just adds a space at the end of the link https://stackoverflow.com/a/12046827
+    /** currently just adds a space at the end of the link https://stackoverflow.com/a/12046827 */
     public void escapeLink(ActionEvent e) {
         int caretPos = NotePanel.getCaretPosition();
 
@@ -202,6 +189,26 @@ public class NoteToolWindow {
             }
         }
         NotePanel.setCaretPosition(pos);
+    }
+
+    /** on link click, go to loc-id */
+    public HyperlinkListener getLinkListener() {
+        HyperlinkListener listener = new HyperlinkListener() {
+            public void hyperlinkUpdate (HyperlinkEvent e){
+                System.out.println("hyperlinkUpdate received");
+                if (e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
+                    AttributeSet attrs = e.getSourceElement().getAttributes();
+                    SimpleAttributeSet simpleAttributeSet = (SimpleAttributeSet) attrs.getAttribute(HTML.Tag.A);
+                    String locId = (String) simpleAttributeSet.getAttribute("loc-id");
+                    if (locId != null) {
+                        FindMethodProcessor processor = new FindMethodProcessor(locId);
+                        processor.runProcessor(project);
+                        processor.goToFoundMethods();
+                    }
+                }
+            }
+        };
+        return listener;
     }
 
 
