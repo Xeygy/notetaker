@@ -3,9 +3,7 @@ package org.intellij.sdk.toolWindow;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.psi.PsiMethod;
-import com.thoughtworks.qdox.model.expression.Not;
 
-import javax.print.attribute.Attribute;
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
@@ -15,19 +13,15 @@ import javax.swing.text.*;
 import javax.swing.text.html.HTML;
 import javax.swing.text.html.HTMLDocument;
 import javax.swing.text.html.HTMLEditorKit;
-import java.awt.*;
 import java.awt.event.ActionEvent;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.io.IOException;
-import java.util.Enumeration;
 import java.util.List;
-import java.util.Locale;
 
 public class NoteToolWindow {
     private JTextPane NotePanel;
     private JPanel NotePanelContent;
     private JCheckBox IsEditable;
+    private JButton EscHTMLButton;
     private JScrollPane ScrollPane;
     private Project project;
     private final StyledDocument doc;
@@ -67,7 +61,6 @@ public class NoteToolWindow {
         doc = NotePanel.getStyledDocument();
         docParser = new DocumentParser(doc);
         doc.addDocumentListener(new NoteDocumentListener());
-        NotePanel.addMouseListener(new NoteMouseListener());
     }
 
     public void toggleEditability(ActionEvent e) {
@@ -148,7 +141,7 @@ public class NoteToolWindow {
                                 HTMLEditorKit kit = (HTMLEditorKit) NotePanel.getEditorKit();
                                 //the next 3 lines are necessary to create separate text elem
                                 //to be replaced with link
-                                // CONFUSING
+                                // TODO: figure out why this works
                                 SimpleAttributeSet a = new SimpleAttributeSet();
                                 a.addAttribute("DUMMY_ATTRIBUTE_NAME", "DUMMY_ATTRIBUTE_VALUE");
                                 doc.setCharacterAttributes(start, text.length(), a, false);
@@ -188,39 +181,5 @@ public class NoteToolWindow {
         return 0;
     }
 
-    class NoteMouseListener implements MouseListener {
-        @Override
-        public void mouseClicked(MouseEvent e) {
-            Point mousePt = e.getPoint();
-            int offset = NotePanel.viewToModel2D(mousePt);
-            List<OffsetRange> ranges = docParser.getBracedContentRanges(NAME_MIN_LEN, NAME_MAX_LEN);
-            OffsetRange selectedRange = OffsetRange.getRangeWith(ranges, offset);
-            if (selectedRange != null) {
-                String def = docParser.getContentInRange(selectedRange);
-                FindMethodProcessor processor = new FindMethodProcessor(def);
-                processor.runProcessor(project);
-                processor.goToFoundMethods();
-            }
-        }
 
-        @Override
-        public void mousePressed(MouseEvent e) {
-
-        }
-
-        @Override
-        public void mouseReleased(MouseEvent e) {
-
-        }
-
-        @Override
-        public void mouseEntered(MouseEvent e) {
-
-        }
-
-        @Override
-        public void mouseExited(MouseEvent e) {
-
-        }
-    }
 }
