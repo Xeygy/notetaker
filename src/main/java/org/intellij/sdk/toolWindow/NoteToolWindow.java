@@ -3,7 +3,6 @@ package org.intellij.sdk.toolWindow;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.psi.PsiMethod;
-import com.thoughtworks.qdox.model.expression.Not;
 
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
@@ -23,11 +22,13 @@ public class NoteToolWindow {
     private JPanel NotePanelContent;
     private JCheckBox IsEditable;
     private JButton EscLinkButton;
+    private JButton saveButton;
     private JScrollPane ScrollPane;
     private Project project;
     private final StyledDocument doc;
     private DocumentParser docParser;
     private Style defaultStyle;
+    private NoteStorageManager manager;
     private boolean isInProgress;
 
     private final int NAME_MIN_LEN = 1;
@@ -37,16 +38,20 @@ public class NoteToolWindow {
      * {@link FindMethodVisitor#visitMethod(PsiMethod)} */
     public NoteToolWindow(ToolWindow toolWindow, Project project) {
         this.project = project;
+        manager = new NoteStorageManager();
         IsEditable.addActionListener(e -> toggleEditability(e));
         EscLinkButton.addActionListener(e -> escapeLink(e));
+        saveButton.addActionListener(e -> saveNote(e));
         EditorKit k = new CustomHTMLEditorKit();
         NotePanel.setEditorKit(k);
 
         //set notepanel text styling to intellij defaults
         NotePanel.putClientProperty(JEditorPane.HONOR_DISPLAY_PROPERTIES, Boolean.TRUE);
         defaultStyle = NotePanel.getLogicalStyle();
-
-        //NotePanel.setText("<a loc-id=\"DocumentParser#getStartOfStrings(String)\" href=\"http://www.google.com/finance?q=NYSE:C\">Click this link</a> aa");
+        if (manager.getNoteText() != null) {
+            NotePanel.setText(manager.getNoteText());
+            System.out.println("from save");
+        }
 
         NotePanel.addHyperlinkListener(getLinkListener());
         doc = NotePanel.getStyledDocument();
@@ -54,13 +59,12 @@ public class NoteToolWindow {
         doc.addDocumentListener(new NoteDocumentListener());
     }
 
+    public void saveNote(ActionEvent e) {
+        manager.setNoteText(NotePanel.getText());
+    }
+
     public void toggleEditability(ActionEvent e) {
         NotePanel.setEditable(!NotePanel.isEditable());
-        if (NotePanel.isEditable()) {
-            System.out.println("Text now editable");
-        } else {
-            System.out.println("Text now not editable");
-        }
     }
 
     public JPanel getContent() {
@@ -71,7 +75,6 @@ public class NoteToolWindow {
     class NoteDocumentListener implements DocumentListener {
         public void insertUpdate(DocumentEvent e) {
             System.out.println(e);
-            System.out.println("ew");
             autoLink(e);
             List<Integer> starts = docParser.getStartOfStrings("\\{");
             for (int start : starts) {
