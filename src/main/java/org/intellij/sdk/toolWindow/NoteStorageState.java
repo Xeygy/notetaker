@@ -11,10 +11,6 @@ import javax.swing.text.Document;
 
 @State(name = "Notetaker", storages = @Storage("notetaker.xml"))
 class NoteStorageState implements PersistentStateComponent<NoteStorageState> {
-
-//    @OptionTag(converter = DocumentConverter.class)
-//    private Document storage;
-
     private String text;
 
     public NoteStorageState getState() {
@@ -24,13 +20,6 @@ class NoteStorageState implements PersistentStateComponent<NoteStorageState> {
     public void loadState(NoteStorageState state) {
         XmlSerializerUtil.copyBean(state, this);
     }
-
-//    public Document getDoc() {
-//        return storage;
-//    }
-//    public void setDoc(Document doc) {
-//        storage = doc;
-//    }
 
     public String getText() {
         return text;

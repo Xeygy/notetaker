@@ -45,13 +45,13 @@ public class NoteToolWindow {
         EditorKit k = new CustomHTMLEditorKit();
         NotePanel.setEditorKit(k);
 
-        //set notepanel text styling to intellij defaults
-        NotePanel.putClientProperty(JEditorPane.HONOR_DISPLAY_PROPERTIES, Boolean.TRUE);
-        defaultStyle = NotePanel.getLogicalStyle();
         if (manager.getNoteText() != null) {
             NotePanel.setText(manager.getNoteText());
             System.out.println("from save");
         }
+        //set notepanel text styling to intellij defaults
+        NotePanel.putClientProperty(JEditorPane.HONOR_DISPLAY_PROPERTIES, Boolean.TRUE);
+        defaultStyle = NotePanel.getLogicalStyle();
 
         NotePanel.addHyperlinkListener(getLinkListener());
         doc = NotePanel.getStyledDocument();
