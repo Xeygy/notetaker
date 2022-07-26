@@ -14,14 +14,17 @@ import javax.swing.text.html.HTML;
 import javax.swing.text.html.HTMLDocument;
 import javax.swing.text.html.HTMLEditorKit;
 import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.io.IOException;
 import java.util.List;
+
+import static java.awt.event.KeyEvent.VK_RIGHT;
 
 public class NoteToolWindow {
     private JTextPane NotePanel;
     private JPanel NotePanelContent;
     private JCheckBox IsEditable;
-    private JButton EscLinkButton;
     private JButton saveButton;
     private JScrollPane ScrollPane;
     private Project project;
@@ -38,12 +41,31 @@ public class NoteToolWindow {
      * {@link FindMethodVisitor#visitMethod(PsiMethod)} */
     public NoteToolWindow(ToolWindow toolWindow, Project project) {
         this.project = project;
-        manager = new NoteStorageManager();
+        manager = new NoteStorageManager(project);
         IsEditable.addActionListener(e -> toggleEditability(e));
-        EscLinkButton.addActionListener(e -> escapeLink(e));
-        saveButton.addActionListener(e -> saveNote(e));
+
+        saveButton.addActionListener(e -> saveNote());
         EditorKit k = new CustomHTMLEditorKit();
         NotePanel.setEditorKit(k);
+        NotePanel.addKeyListener(new KeyListener() {
+            @Override
+            public void keyTyped(KeyEvent e) {
+            }
+
+            @Override
+            public void keyPressed(KeyEvent e) {
+                System.out.println(e);
+                if (e.getKeyCode() == VK_RIGHT) {
+                    escapeLink();
+                    System.out.println("escape!");
+                }
+            }
+
+            @Override
+            public void keyReleased(KeyEvent e) {
+
+            }
+        });
 
         if (manager.getNoteText() != null) {
             NotePanel.setText(manager.getNoteText());
@@ -59,7 +81,7 @@ public class NoteToolWindow {
         doc.addDocumentListener(new NoteDocumentListener());
     }
 
-    public void saveNote(ActionEvent e) {
+    public void saveNote() {
         manager.setNoteText(NotePanel.getText());
     }
 
@@ -76,6 +98,7 @@ public class NoteToolWindow {
         public void insertUpdate(DocumentEvent e) {
             System.out.println(e);
             autoLink(e);
+            saveNote();
             List<Integer> starts = docParser.getStartOfStrings("\\{");
             for (int start : starts) {
                 System.out.println(docParser.getContentInCurlyBraces(start, NAME_MIN_LEN, NAME_MAX_LEN));
@@ -155,22 +178,24 @@ public class NoteToolWindow {
         return 0;
     }
 
-    /** currently just adds a space at the end of the link https://stackoverflow.com/a/12046827 */
-    public void escapeLink(ActionEvent e) {
+    /** currently just adds a space at the end of the link https://stackoverflow.com/a/12046827
+     * only works if you're at the end of the document.*/
+    public void escapeLink() {
         int caretPos = NotePanel.getCaretPosition();
 
         Element elem = doc.getParagraphElement(caretPos);
 
         int pos = elem.getEndOffset() - 1;
         int max = doc.getLength();
-        if (pos >= max) {
+        if (caretPos >= max) {
             try {
                 doc.insertString(pos, " ", defaultStyle);
+                NotePanel.setCaretPosition(pos);
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
         }
-        NotePanel.setCaretPosition(pos);
+
     }
 
     /** on link click, go to loc-id */
