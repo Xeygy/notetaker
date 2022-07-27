@@ -29,10 +29,6 @@ class NoteDocumentListener implements DocumentListener {
         System.out.println(e);
         autoLink(e);
         noteToolWindow.saveNote();
-        List<Integer> starts = noteToolWindow.getDocParser().getStartOfStrings("\\{");
-        for (int start : starts) {
-            System.out.println(noteToolWindow.getDocParser().getContentInCurlyBraces(start, noteToolWindow.NAME_MIN_LEN, noteToolWindow.NAME_MAX_LEN));
-        }
     }
 
     public void removeUpdate(DocumentEvent e) {

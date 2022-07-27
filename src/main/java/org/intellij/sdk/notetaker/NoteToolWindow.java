@@ -27,7 +27,6 @@ public class NoteToolWindow {
     private Project project;
     private final StyledDocument doc;
 
-    private DocumentParser docParser;
     private Style defaultStyle;
     private NoteStorageManager manager;
     private boolean isInProgress;
@@ -80,7 +79,6 @@ public class NoteToolWindow {
         }
 
         doc = NotePanel.getStyledDocument();
-        docParser = new DocumentParser(doc);
 
         // add Listeners
         doc.addDocumentListener(new NoteDocumentListener(this));
@@ -103,9 +101,6 @@ public class NoteToolWindow {
     }
     public void setInProgress(boolean isInProgress) {
         this.isInProgress = isInProgress;
-    }
-    public DocumentParser getDocParser() {
-        return docParser;
     }
     public JTextPane getNotePanel() {
         return NotePanel;
