@@ -1,5 +1,7 @@
 package org.intellij.sdk.notetaker;
 
+import org.intellij.sdk.notetaker.window.NoteToolWindow;
+
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
@@ -10,7 +12,6 @@ import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.html.HTMLDocument;
 import javax.swing.text.html.HTMLEditorKit;
 import java.io.IOException;
-import java.util.List;
 
 /**
  * run:
@@ -18,7 +19,7 @@ import java.util.List;
  *  saveNote
  * every time the doc is updated
  */
-class NoteDocumentListener implements DocumentListener {
+public class NoteDocumentListener implements DocumentListener {
     private final NoteToolWindow noteToolWindow;
 
     public NoteDocumentListener(NoteToolWindow noteToolWindow) {

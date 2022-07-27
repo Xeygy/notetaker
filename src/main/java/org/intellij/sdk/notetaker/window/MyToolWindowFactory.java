@@ -1,4 +1,4 @@
-package org.intellij.sdk.notetaker;
+package org.intellij.sdk.notetaker.window;
 
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.wm.ToolWindow;

@@ -1,10 +1,14 @@
-package org.intellij.sdk.notetaker;
+package org.intellij.sdk.notetaker.window;
 
 import com.intellij.openapi.editor.colors.CodeInsightColors;
 import com.intellij.openapi.editor.colors.EditorColorsManager;
 import com.intellij.openapi.editor.colors.EditorColorsScheme;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.wm.ToolWindow;
+import org.intellij.sdk.notetaker.CustomHTMLEditorKit;
+import org.intellij.sdk.notetaker.FindMethodProcessor;
+import org.intellij.sdk.notetaker.NoteDocumentListener;
+import org.intellij.sdk.notetaker.NoteStorageManager;
 
 import javax.swing.*;
 import javax.swing.event.HyperlinkEvent;
