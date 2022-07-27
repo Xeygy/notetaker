@@ -2,13 +2,15 @@ package org.intellij.sdk.toolWindow;
 
 import javax.swing.*;
 import javax.swing.text.html.HTMLEditorKit;
-import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
-/** solution from:
- * https://stackoverflow.com/questions/31906569/add-hyperlinklistener-on-editable-editorpane*/
+/** Adds hyperlink clicking functionality from an editable
+ * JTextPane.
+ * Solution from:
+ * https://stackoverflow.com/questions/31906569/add-hyperlinklistener-on-editable-editorpane */
 public class CustomHTMLEditorKit extends HTMLEditorKit {
+//    Maybe for hover cursor changing?
 //    public boolean isNeedCursorChange=true;
 //    JTextPane edit=new JTextPane() {
 //        public void setCursor(Cursor cursor) {
