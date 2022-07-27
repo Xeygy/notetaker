@@ -33,19 +33,6 @@ public class MyToolWindowFactory implements ToolWindowFactory {
         ContentManager cm = toolWindow.getContentManager();
         ContentFactory contentFactory = ContentFactory.SERVICE.getInstance();
 
-//        GoToProofOfConcept goToWindow = new GoToProofOfConcept(toolWindow, project);
-//        Content content = contentFactory.createContent(goToWindow.getContent(), "Go to...", false);
-//        cm.addContent(content);
-
-//        PsiFileFactory factory = PsiFileFactory.getInstance(project);
-//        PsiFile pf = factory.createFileFromText("test", Language.findLanguageByID("JAVA"),
-//                "public class _test {\n" +
-//                        "public int add(int a, int b) {\n" +
-//                        "add(1, 2);\n" +
-//                        "return a + b;\n" +
-//                        "}\n" +
-//                        "}");
-
         for (int i = 1; i<= 2; i++) {
             NoteToolWindow noteToolWindow = new NoteToolWindow(toolWindow, project);
             Content noteTab = contentFactory.createContent(noteToolWindow.getContent(), "Notes"+i, false);
