@@ -61,6 +61,7 @@ public class DocumentParser {
         }
     }
 
+    /** gets range for content given location of the '\' */
     public OffsetRange getBracedContentRange(int start, int minContentLen, int maxContentLen) {
         int wordStart = start + 2;
         for (int currLen = minContentLen; currLen <= maxContentLen; currLen++) {

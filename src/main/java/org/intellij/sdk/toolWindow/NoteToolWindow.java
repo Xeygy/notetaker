@@ -65,8 +65,10 @@ public class NoteToolWindow {
         NotePanel.putClientProperty(JEditorPane.HONOR_DISPLAY_PROPERTIES, Boolean.TRUE);
         defaultStyle = NotePanel.getLogicalStyle();
         EditorColorsScheme colorsScheme = EditorColorsManager.getInstance().getGlobalScheme();
-        //colors from https://stackoverflow.com/q/66894675 (check comments also)
+        // colors from https://stackoverflow.com/q/66894675 (check comments also)
         Color linkColor = colorsScheme.getAttributes(CodeInsightColors.HYPERLINK_ATTRIBUTES).getForegroundColor();
+        Color textPaneBg = colorsScheme.getDefaultBackground();
+        NotePanel.setBackground(textPaneBg);
         String rgb = "rgb("
                 + linkColor.getRed() + ", "
                 + linkColor.getGreen() + ", "
