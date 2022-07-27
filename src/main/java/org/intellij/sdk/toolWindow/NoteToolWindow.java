@@ -1,7 +1,11 @@
 package org.intellij.sdk.toolWindow;
 
+import com.intellij.openapi.editor.colors.CodeInsightColors;
+import com.intellij.openapi.editor.colors.EditorColorsManager;
+import com.intellij.openapi.editor.colors.EditorColorsScheme;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.wm.ToolWindow;
+import com.intellij.util.ui.UIUtil;
 
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
@@ -11,10 +15,14 @@ import javax.swing.text.*;
 import javax.swing.text.html.HTML;
 import javax.swing.text.html.HTMLDocument;
 import javax.swing.text.html.HTMLEditorKit;
+import javax.swing.text.html.StyleSheet;
+import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.io.IOException;
 
+import static com.intellij.openapi.editor.colors.EditorColors.ANNOTATIONS_COLOR;
+import static com.intellij.openapi.editor.colors.EditorColors.DOCUMENTATION_COLOR;
 import static java.awt.event.KeyEvent.VK_RIGHT;
 
 public class NoteToolWindow {
@@ -49,41 +57,39 @@ public class NoteToolWindow {
      * */
     public NoteToolWindow(ToolWindow toolWindow, Project project) {
         this.project = project;
-        manager = new NoteStorageManager(project);
-        EditorKit k = new CustomHTMLEditorKit();
-        NotePanel.setEditorKit(k);
-        NotePanel.addKeyListener(new KeyListener() {
-            @Override
-            public void keyTyped(KeyEvent e) {
-            }
 
-            @Override
-            public void keyPressed(KeyEvent e) {
-                System.out.println(e);
-                if (e.getKeyCode() == VK_RIGHT) {
-                    escapeLink();
-                    System.out.println("escape!");
-                }
-            }
+        HTMLEditorKit kit = new CustomHTMLEditorKit();
+        NotePanel.setEditorKit(kit);
 
-            @Override
-            public void keyReleased(KeyEvent e) {
-
-            }
-        });
-
-        if (manager.getNoteText() != null) {
-            NotePanel.setText(manager.getNoteText());
-            System.out.println("from save");
-        }
-        //set notepanel text styling to intellij defaults
+        // set styling
         NotePanel.putClientProperty(JEditorPane.HONOR_DISPLAY_PROPERTIES, Boolean.TRUE);
         defaultStyle = NotePanel.getLogicalStyle();
+        EditorColorsScheme colorsScheme = EditorColorsManager.getInstance().getGlobalScheme();
+        //colors from https://stackoverflow.com/q/66894675 (check comments also)
+        Color linkColor = colorsScheme.getAttributes(CodeInsightColors.HYPERLINK_ATTRIBUTES).getForegroundColor();
+        String rgb = "rgb("
+                + linkColor.getRed() + ", "
+                + linkColor.getGreen() + ", "
+                + linkColor.getBlue() +
+                ")";
+        StyleSheet css = kit.getStyleSheet();
+        css.addRule("a { color: " + rgb + ";}");
 
-        NotePanel.addHyperlinkListener(getLinkListener());
+        // load existing note if it exists
+        manager = new NoteStorageManager(project);
+        if (manager.getNoteText() != null) {
+            NotePanel.setText(manager.getNoteText());
+            String s = manager.getNoteText();
+            System.out.println("from save");
+        }
+
         doc = NotePanel.getStyledDocument();
         docParser = new DocumentParser(doc);
+
+        // add Listeners
         doc.addDocumentListener(new NoteDocumentListener(this));
+        NotePanel.addKeyListener(getKeyListener());
+        NotePanel.addHyperlinkListener(getLinkListener());
     }
 
     public void saveNote() {
@@ -95,39 +101,18 @@ public class NoteToolWindow {
         return NotePanelContent;
     }
 
+    /** getters & setters */
     public boolean isInProgress() {
         return isInProgress;
     }
     public void setInProgress(boolean isInProgress) {
         this.isInProgress = isInProgress;
     }
-
     public DocumentParser getDocParser() {
         return docParser;
     }
-
     public JTextPane getNotePanel() {
         return NotePanel;
-    }
-
-    /** currently just adds a space at the end of the link https://stackoverflow.com/a/12046827
-     * only works if you're at the end of the document.*/
-    public void escapeLink() {
-        int caretPos = NotePanel.getCaretPosition();
-
-        Element elem = doc.getParagraphElement(caretPos);
-
-        int pos = elem.getEndOffset() - 1;
-        int max = doc.getLength();
-        if (caretPos >= max) {
-            try {
-                doc.insertString(pos, " ", defaultStyle);
-                NotePanel.setCaretPosition(pos);
-            } catch (Exception ex) {
-                ex.printStackTrace();
-            }
-        }
-
     }
 
     /** on link click, go to loc-id */
@@ -148,5 +133,45 @@ public class NoteToolWindow {
             }
         };
         return listener;
+    }
+
+    public KeyListener getKeyListener() {
+        return new KeyListener() {
+            @Override
+            public void keyTyped(KeyEvent e) {
+            }
+
+            @Override
+            public void keyPressed(KeyEvent e) {
+                System.out.println(e);
+                if (e.getKeyCode() == VK_RIGHT) {
+                    escapeLink();
+                    System.out.println("escape!");
+                }
+            }
+
+            @Override
+            public void keyReleased(KeyEvent e) {
+
+            }
+        };
+    }
+    /** currently just adds a space at the end of the link https://stackoverflow.com/a/12046827
+     * only works if you're at the end of the document.*/
+    public void escapeLink() {
+        int caretPos = NotePanel.getCaretPosition();
+        Element elem = doc.getParagraphElement(caretPos);
+
+        int pos = elem.getEndOffset() - 1;
+        int max = doc.getLength();
+        if (caretPos >= max) {
+            try {
+                doc.insertString(pos, " ", defaultStyle);
+                NotePanel.setCaretPosition(pos);
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        }
+
     }
 }
