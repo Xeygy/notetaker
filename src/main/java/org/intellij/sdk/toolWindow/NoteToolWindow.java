@@ -2,22 +2,18 @@ package org.intellij.sdk.toolWindow;
 
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.wm.ToolWindow;
-import com.intellij.psi.PsiMethod;
 
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
 import javax.swing.text.*;
 import javax.swing.text.html.HTML;
 import javax.swing.text.html.HTMLDocument;
 import javax.swing.text.html.HTMLEditorKit;
-import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.io.IOException;
-import java.util.List;
 
 import static java.awt.event.KeyEvent.VK_RIGHT;
 
@@ -34,8 +30,8 @@ public class NoteToolWindow {
     private NoteStorageManager manager;
     private boolean isInProgress;
 
-    private final int NAME_MIN_LEN = 1;
-    private final int NAME_MAX_LEN = 20;
+    public final int NAME_MIN_LEN = 1;
+    public final int NAME_MAX_LEN = 20;
 
     /**
      * Sets up instance vars
@@ -47,8 +43,6 @@ public class NoteToolWindow {
      * defaultstyle
      * doc
      *
-     * EditButton
-     * SaveButton
      * KeyListener (for escaping hyperlinks)
      * HyperLinkListener
      * DocParser (for finding links)
@@ -89,100 +83,31 @@ public class NoteToolWindow {
         NotePanel.addHyperlinkListener(getLinkListener());
         doc = NotePanel.getStyledDocument();
         docParser = new DocumentParser(doc);
-        doc.addDocumentListener(new NoteDocumentListener());
+        doc.addDocumentListener(new NoteDocumentListener(this));
     }
 
     public void saveNote() {
         manager.setNoteText(NotePanel.getText());
     }
 
+    /** called in toolWindowFactory to diplay tool window */
     public JPanel getContent() {
         return NotePanelContent;
     }
 
-    /** run the autoLink process every time the doc is updated */
-    class NoteDocumentListener implements DocumentListener {
-        public void insertUpdate(DocumentEvent e) {
-            System.out.println(e);
-            autoLink(e);
-            saveNote();
-            List<Integer> starts = docParser.getStartOfStrings("\\{");
-            for (int start : starts) {
-                System.out.println(docParser.getContentInCurlyBraces(start, NAME_MIN_LEN, NAME_MAX_LEN));
-            }
-        }
-        public void removeUpdate(DocumentEvent e) {
-            System.out.println(e);
-        }
-        public void changedUpdate(DocumentEvent e) {
-            //Plain text components do not fire these events
-        }
+    public boolean isInProgress() {
+        return isInProgress;
+    }
+    public void setInProgress(boolean isInProgress) {
+        this.isInProgress = isInProgress;
     }
 
-
-    /** code taken from here: https://stackoverflow.com/questions/12035925/java-jeditorpane-hyperlink-wont-exit-tag */
-    private void autoLink(DocumentEvent e) {
-        Runnable autoLink = new Runnable() {
-            public void run() {
-                // checks that the insert is a single char (not copy-pasted) and autolink is not running
-                // checks for instance of HTMLDocument
-                if (e.getDocument() instanceof HTMLDocument
-                        && e.getOffset() > 0
-                        && e.getLength() == 1
-                        && !isInProgress) {
-                    try {
-                        // casts doc to HTMLDocument
-                        HTMLDocument doc = (HTMLDocument) e.getDocument();
-                        String text = doc.getText(e.getOffset(), e.getLength());
-                        // if whitespace just entered, check word before the whitespace to update
-                        if (text.charAt(0) == ' ' || text.charAt(0) == '\n' || text.charAt(0) == '\t') {
-                            // get text of word before whitespace
-                            //int start = Utilities.getWordStart(NotePanel, e.getOffset() - 1);
-                            int start = getBetterWordStart(NotePanel, e.getOffset() - 1);
-                            text = doc.getText(start, e.getOffset() - start);
-                            if (text.startsWith("\\{") && text.endsWith("}")) {
-                                isInProgress = true;
-                                HTMLEditorKit kit = (HTMLEditorKit) NotePanel.getEditorKit();
-                                //the next 3 lines are necessary to create separate text elem
-                                //to be replaced with link
-                                // TODO: figure out why this works
-                                SimpleAttributeSet a = new SimpleAttributeSet();
-                                a.addAttribute("DUMMY_ATTRIBUTE_NAME", "DUMMY_ATTRIBUTE_VALUE");
-                                doc.setCharacterAttributes(start, text.length(), a, false);
-
-                                Element elem = doc.getCharacterElement(start);
-                                String innerText = text.substring(2, text.length()-1);
-                                if (innerText.length() > 0) {
-                                    String html = "<a loc-id='" + innerText + "' href='#'>" + innerText + "</a>";
-                                    doc.setOuterHTML(elem, html);
-                                }
-                                isInProgress = false;
-                            }
-                        }
-                    } catch (BadLocationException e1) {
-                        e1.printStackTrace();
-                    } catch (IOException e1) {
-                        e1.printStackTrace();
-                    }
-                }
-            }
-        };
-        SwingUtilities.invokeLater(autoLink);
+    public DocumentParser getDocParser() {
+        return docParser;
     }
 
-    public static int getBetterWordStart(JTextPane pane, int offset) {
-        Document doc = pane.getDocument();
-        for (; offset >= 0; offset--) {
-            try {
-                String currSpot = doc.getText(offset, 1);
-                if (currSpot.matches("\\s")) {
-                    return offset + 1;
-                }
-            } catch (BadLocationException e) {
-                e.printStackTrace();
-            }
-        }
-        return 0;
+    public JTextPane getNotePanel() {
+        return NotePanel;
     }
 
     /** currently just adds a space at the end of the link https://stackoverflow.com/a/12046827
