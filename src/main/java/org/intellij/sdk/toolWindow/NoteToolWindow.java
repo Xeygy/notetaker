@@ -24,11 +24,11 @@ import static java.awt.event.KeyEvent.VK_RIGHT;
 public class NoteToolWindow {
     private JTextPane NotePanel;
     private JPanel NotePanelContent;
-    private JCheckBox IsEditable;
-    private JButton saveButton;
     private JScrollPane ScrollPane;
+
     private Project project;
     private final StyledDocument doc;
+
     private DocumentParser docParser;
     private Style defaultStyle;
     private NoteStorageManager manager;
@@ -37,14 +37,25 @@ public class NoteToolWindow {
     private final int NAME_MIN_LEN = 1;
     private final int NAME_MAX_LEN = 20;
 
-    /** @see DocumentParser#getStartOfStrings(String)  getStart
-     * {@link FindMethodVisitor#visitMethod(PsiMethod)} */
+    /**
+     * Sets up instance vars
+     * project
+     * manager (for saves)
+     *      - loading saves
+     * editorKit
+     * styling
+     * defaultstyle
+     * doc
+     *
+     * EditButton
+     * SaveButton
+     * KeyListener (for escaping hyperlinks)
+     * HyperLinkListener
+     * DocParser (for finding links)
+     * */
     public NoteToolWindow(ToolWindow toolWindow, Project project) {
         this.project = project;
         manager = new NoteStorageManager(project);
-        IsEditable.addActionListener(e -> toggleEditability(e));
-
-        saveButton.addActionListener(e -> saveNote());
         EditorKit k = new CustomHTMLEditorKit();
         NotePanel.setEditorKit(k);
         NotePanel.addKeyListener(new KeyListener() {
@@ -83,10 +94,6 @@ public class NoteToolWindow {
 
     public void saveNote() {
         manager.setNoteText(NotePanel.getText());
-    }
-
-    public void toggleEditability(ActionEvent e) {
-        NotePanel.setEditable(!NotePanel.isEditable());
     }
 
     public JPanel getContent() {
