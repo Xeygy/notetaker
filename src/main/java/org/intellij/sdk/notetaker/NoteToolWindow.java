@@ -31,9 +31,6 @@ public class NoteToolWindow {
     private NoteStorageManager manager;
     private boolean isInProgress;
 
-    public final int NAME_MIN_LEN = 1;
-    public final int NAME_MAX_LEN = 20;
-
     /**
      * Sets up instance vars
      * project
