@@ -1,4 +1,4 @@
-package org.intellij.sdk.toolWindow;
+package org.intellij.sdk.notetaker;
 
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;

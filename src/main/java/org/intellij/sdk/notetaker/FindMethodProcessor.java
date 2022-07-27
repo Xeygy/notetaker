@@ -1,4 +1,4 @@
-package org.intellij.sdk.toolWindow;
+package org.intellij.sdk.notetaker;
 
 import com.intellij.lang.jvm.JvmParameter;
 import com.intellij.openapi.module.Module;

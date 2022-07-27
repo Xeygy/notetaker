@@ -1,13 +1,8 @@
-package org.intellij.sdk.toolWindow;
+package org.intellij.sdk.notetaker;
 
 import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.components.State;
-import com.intellij.openapi.components.Storage;
-import com.intellij.openapi.components.StoragePathMacros;
 import com.intellij.util.xmlb.XmlSerializerUtil;
-import com.intellij.util.xmlb.annotations.OptionTag;
-
-import javax.swing.text.Document;
 
 
 @State(name = "Notetaker")

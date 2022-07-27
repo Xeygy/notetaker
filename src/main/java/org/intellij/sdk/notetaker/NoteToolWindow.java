@@ -1,28 +1,22 @@
-package org.intellij.sdk.toolWindow;
+package org.intellij.sdk.notetaker;
 
 import com.intellij.openapi.editor.colors.CodeInsightColors;
 import com.intellij.openapi.editor.colors.EditorColorsManager;
 import com.intellij.openapi.editor.colors.EditorColorsScheme;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.wm.ToolWindow;
-import com.intellij.util.ui.UIUtil;
 
 import javax.swing.*;
-import javax.swing.event.DocumentEvent;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
 import javax.swing.text.*;
 import javax.swing.text.html.HTML;
-import javax.swing.text.html.HTMLDocument;
 import javax.swing.text.html.HTMLEditorKit;
 import javax.swing.text.html.StyleSheet;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.io.IOException;
 
-import static com.intellij.openapi.editor.colors.EditorColors.ANNOTATIONS_COLOR;
-import static com.intellij.openapi.editor.colors.EditorColors.DOCUMENTATION_COLOR;
 import static java.awt.event.KeyEvent.VK_RIGHT;
 
 public class NoteToolWindow {

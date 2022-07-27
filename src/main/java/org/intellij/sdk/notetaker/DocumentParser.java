@@ -1,7 +1,6 @@
-package org.intellij.sdk.toolWindow;
+package org.intellij.sdk.notetaker;
 
 import javax.swing.text.Document;
-import javax.swing.text.Style;
 import java.util.ArrayList;
 import java.util.List;
 

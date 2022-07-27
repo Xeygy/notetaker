@@ -1,10 +1,6 @@
-package org.intellij.sdk.toolWindow;
+package org.intellij.sdk.notetaker;
 
-import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.project.ProjectManager;
-
-import javax.swing.text.Document;
 
 public class NoteStorageManager {
     private final NoteStorageState storageState;
