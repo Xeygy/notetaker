@@ -1,18 +1,23 @@
 package org.intellij.sdk.notetaker;
 
+import com.google.wireless.android.sdk.stats.IntellijProjectSizeStats;
+import com.intellij.codeInsight.completion.AllClassesGetter;
+import com.intellij.ide.highlighter.JavaFileType;
 import com.intellij.lang.jvm.JvmParameter;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.pom.Navigatable;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.PsiMethod;
+import com.intellij.psi.*;
+import com.intellij.psi.search.FileTypeIndex;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.search.PsiSearchHelper;
+import com.intellij.psi.search.searches.AllClassesSearch;
 import com.intellij.util.Processor;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Collection;
 import java.util.HashSet;
 
 public class FindMethodProcessor implements Processor {
@@ -20,24 +25,35 @@ public class FindMethodProcessor implements Processor {
     private final String methodName;
     private String containingClass;
     private final HashSet<PsiMethod> foundMethods;
+    private final Project project;
 
     /** a processor for PsiFiles that finds all instances
      * of a method with a given method name
      * @param methodName the method name to look for
      */
-    public FindMethodProcessor(String methodName) {
+    public FindMethodProcessor(String methodName, Project project) {
         this.methodName = methodName;
         this.foundMethods = new HashSet<>();
+        this.project = project;
     }
 
-    public FindMethodProcessor(String containingClass, String methodName) {
-        this(methodName);
-        this.containingClass = containingClass;
+//    public FindMethodProcessor(String containingClass, String methodName) {
+//        this(methodName);
+//        this.containingClass = containingClass;
+//    }
+
+    public HashSet<PsiMethod> getFoundMethods() {
+        return foundMethods;
     }
 
     @Override
     public boolean process(Object o) {
         FindMethodVisitor visitor = new FindMethodVisitor(containingClass, methodName, foundMethods);
+        if (o instanceof VirtualFile) {
+            VirtualFile vf = ((VirtualFile)o);
+            PsiFile pf = PsiManager.getInstance(project).findFile(vf);
+            pf.accept(visitor);
+        }
         if (o instanceof PsiFile) {
             ((PsiFile)o).accept(visitor);
         }
@@ -74,8 +90,7 @@ public class FindMethodProcessor implements Processor {
         }
     }
 
-    public void runProcessor(Project project) {
-        PsiSearchHelper searchHelper = PsiSearchHelper.getInstance(project);
+    public void runProcessor() {
         Module @NotNull [] modules = ModuleManager.getInstance(project).getModules();
         GlobalSearchScope scope = null;
         for (Module m : modules) {
@@ -85,7 +100,7 @@ public class FindMethodProcessor implements Processor {
             scope = (scope == null) ? tempScope : tempScope.uniteWith(scope);
         }
         if (scope != null) {
-            searchHelper.processAllFilesWithWord(methodName, scope, this, true);
+            FileTypeIndex.processFiles(JavaFileType.INSTANCE, this, scope);
         }
     }
 }

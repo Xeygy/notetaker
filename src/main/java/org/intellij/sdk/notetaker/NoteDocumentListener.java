@@ -1,17 +1,35 @@
 package org.intellij.sdk.notetaker;
 
+import com.intellij.openapi.actionSystem.*;
+import com.intellij.openapi.ui.popup.JBPopup;
+import com.intellij.openapi.ui.popup.JBPopupFactory;
+import com.intellij.openapi.ui.popup.PopupChooserBuilder;
+import com.intellij.psi.PsiMethod;
+import com.intellij.psi.PsiParameter;
+import javafx.scene.control.SelectionMode;
+import javafx.scene.input.KeyCode;
 import org.intellij.sdk.notetaker.window.NoteToolWindow;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
+import javax.swing.event.*;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
 import javax.swing.text.Element;
 import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.html.HTMLDocument;
 import javax.swing.text.html.HTMLEditorKit;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.awt.geom.Rectangle2D;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
 
 /**
  * run:
@@ -40,6 +58,39 @@ public class NoteDocumentListener implements DocumentListener {
         //Plain text components do not fire these events
     }
 
+    private void popUp(HashSet<PsiMethod> foundMethods, int start, HTMLDocument doc) {
+        JPopupMenu pm = new JPopupMenu("Autocomplete");
+        JTextPane textPane = noteToolWindow.getNotePanel();
+
+        for (PsiMethod method : foundMethods) {
+            ArrayList params = new ArrayList<String>();
+            for (PsiParameter param : method.getParameterList().getParameters()) {
+                params.add(param.getType().getCanonicalText());
+            }
+
+            String locId = method.getContainingClass().getQualifiedName() + "." + method.getName() + "#" + String.join(",", params);
+            JMenuItem menuItem = new JMenuItem(locId);
+            menuItem.addActionListener(e -> createLink(start, method, method.getName(), doc));
+            pm.add(menuItem);
+        }
+        if (foundMethods.isEmpty()) {
+            JMenuItem menuItem = new JMenuItem("No methods found.");
+            pm.add(menuItem);
+        }
+
+        // add the popup to the frame
+        int offset = textPane.getCaretPosition();
+        // for displacing the popUp window
+        int fontSize = textPane.getFont().getSize();
+        try {
+            Rectangle2D r = textPane.modelToView2D(offset);
+            pm.show(noteToolWindow.getNotePanel(), (int)r.getX(), (int)r.getY() + 3*fontSize/2);
+            noteToolWindow.getNotePanel().requestFocusInWindow();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     /**
      * checks that the character entered by DocumentEvent e
      * is a whitespace character, and the word preceding that
@@ -62,39 +113,56 @@ public class NoteDocumentListener implements DocumentListener {
                         HTMLDocument doc = (HTMLDocument) e.getDocument();
                         String text = doc.getText(e.getOffset(), e.getLength());
                         // if whitespace just entered, check word before the whitespace to update
-                        if (text.charAt(0) == ' ' || text.charAt(0) == '\n' || text.charAt(0) == '\t') {
+                        if (true || text.charAt(0) == ' ' || text.charAt(0) == '\n' || text.charAt(0) == '\t') {
                             // get text of word before whitespace
                             //int start = Utilities.getWordStart(NotePanel, e.getOffset() - 1);
-                            int start = getBetterWordStart(noteToolWindow.getNotePanel(), e.getOffset() - 1);
-                            text = doc.getText(start, e.getOffset() - start);
-                            if (text.startsWith("\\{") && text.endsWith("}")) {
-                                noteToolWindow.setInProgress(true);
-                                HTMLEditorKit kit = (HTMLEditorKit) noteToolWindow.getNotePanel().getEditorKit();
-
-                                //the next 3 lines are necessary to create separate text elem
-                                //to be replaced with link
-                                SimpleAttributeSet a = new SimpleAttributeSet();
-                                a.addAttribute("DUMMY_ATTRIBUTE_NAME", "DUMMY_ATTRIBUTE_VALUE");
-                                doc.setCharacterAttributes(start, text.length(), a, false);
-
-                                Element elem = doc.getCharacterElement(start);
-                                String innerText = text.substring(2, text.length()-1);
-                                if (innerText.length() > 0) {
-                                    String html = "<a loc-id='" + innerText + "' href='#'>" + innerText + "</a>";
-                                    doc.setOuterHTML(elem, html);
-                                }
-                                noteToolWindow.setInProgress(false);
+                            int start = getBetterWordStart(noteToolWindow.getNotePanel(), e.getOffset());
+                            text = doc.getText(start, e.getOffset() - start + 1);
+                            if (text.startsWith("\\{") && text.length() >= 2 + 2) {
+                                String innerText = text.substring(2);
+                                FindMethodProcessor processor = new FindMethodProcessor(innerText, noteToolWindow.getProject());
+                                processor.runProcessor();
+                                processor.printFoundMethods();
+                                popUp(processor.getFoundMethods(), start, doc);
+                                //createLink(start, text, doc);
                             }
                         }
                     } catch (BadLocationException e1) {
-                        e1.printStackTrace();
-                    } catch (IOException e1) {
                         e1.printStackTrace();
                     }
                 }
             }
         };
         SwingUtilities.invokeLater(autoLink);
+    }
+
+    /** creates a link with loc-id text */
+    public void createLink(int start, PsiMethod method, String displayName, HTMLDocument doc) {
+        noteToolWindow.setInProgress(true);
+        HTMLEditorKit kit = (HTMLEditorKit) noteToolWindow.getNotePanel().getEditorKit();
+
+        // add link to toolWindow.links
+        MethodWrapper currMethod = new MethodWrapper(method);
+        String locId = currMethod.getLocId();
+        noteToolWindow.getLinks().put(locId, currMethod);
+
+        //the next 3 lines are necessary to create separate text elem
+        //to be replaced with link
+        SimpleAttributeSet a = new SimpleAttributeSet();
+        a.addAttribute("DUMMY_ATTRIBUTE_NAME", "DUMMY_ATTRIBUTE_VALUE");
+        doc.setCharacterAttributes(start, locId.length() + 2, a, false);
+
+        Element elem = doc.getCharacterElement(start);
+        if (locId.length() > 0) {
+            String html = "<a loc-id='" + locId + "' href='#'>" + displayName + "</a>";
+            try {
+                doc.setOuterHTML(elem, html);
+                doc.insertString(start+displayName.length(), " ", noteToolWindow.defaultStyle);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        noteToolWindow.setInProgress(false);
     }
 
     /**

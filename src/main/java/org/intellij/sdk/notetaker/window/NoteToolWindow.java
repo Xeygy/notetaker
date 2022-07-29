@@ -5,10 +5,7 @@ import com.intellij.openapi.editor.colors.EditorColorsManager;
 import com.intellij.openapi.editor.colors.EditorColorsScheme;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.wm.ToolWindow;
-import org.intellij.sdk.notetaker.CustomHTMLEditorKit;
-import org.intellij.sdk.notetaker.FindMethodProcessor;
-import org.intellij.sdk.notetaker.NoteDocumentListener;
-import org.intellij.sdk.notetaker.NoteStorageManager;
+import org.intellij.sdk.notetaker.*;
 
 import javax.swing.*;
 import javax.swing.event.HyperlinkEvent;
@@ -20,6 +17,8 @@ import javax.swing.text.html.StyleSheet;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.util.HashMap;
+import java.util.HashSet;
 
 import static java.awt.event.KeyEvent.VK_RIGHT;
 
@@ -31,9 +30,10 @@ public class NoteToolWindow {
     private Project project;
     private final StyledDocument doc;
 
-    private Style defaultStyle;
+    public Style defaultStyle;
     private NoteStorageManager manager;
     private boolean isInProgress;
+    private HashMap<String, MethodWrapper> links;
 
     /**
      * Sets up instance vars
@@ -78,6 +78,7 @@ public class NoteToolWindow {
             String s = manager.getNoteText();
             System.out.println("from save");
         }
+        links = new HashMap<>();
 
         doc = NotePanel.getStyledDocument();
 
@@ -106,6 +107,12 @@ public class NoteToolWindow {
     public JTextPane getNotePanel() {
         return NotePanel;
     }
+    public Project getProject() {
+        return project;
+    }
+    public HashMap<String, MethodWrapper> getLinks() {
+        return links;
+    }
 
     /** on link click, go to loc-id */
     public HyperlinkListener getLinkListener() {
@@ -116,10 +123,12 @@ public class NoteToolWindow {
                     AttributeSet attrs = e.getSourceElement().getAttributes();
                     SimpleAttributeSet simpleAttributeSet = (SimpleAttributeSet) attrs.getAttribute(HTML.Tag.A);
                     String locId = (String) simpleAttributeSet.getAttribute("loc-id");
+                    System.out.println(locId);
                     if (locId != null) {
-                        FindMethodProcessor processor = new FindMethodProcessor(locId);
-                        processor.runProcessor(project);
-                        processor.goToFoundMethods();
+                        MethodWrapper currMethod = links.get(locId);
+                        if (currMethod != null) {
+                            currMethod.goToMethod();
+                        }
                     }
                 }
             }
