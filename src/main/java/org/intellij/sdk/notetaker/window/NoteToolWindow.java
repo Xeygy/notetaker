@@ -20,7 +20,7 @@ import java.awt.event.KeyListener;
 import java.util.HashMap;
 import java.util.HashSet;
 
-import static java.awt.event.KeyEvent.VK_RIGHT;
+import static java.awt.event.KeyEvent.*;
 
 public class NoteToolWindow {
     private JTextPane NotePanel;
@@ -32,6 +32,7 @@ public class NoteToolWindow {
 
     public Style defaultStyle;
     private NoteStorageManager manager;
+    private NoteDocumentListener docListener;
     private boolean isInProgress;
     private HashMap<String, MethodWrapper> links;
 
@@ -76,20 +77,28 @@ public class NoteToolWindow {
         if (manager.getNoteText() != null) {
             NotePanel.setText(manager.getNoteText());
             String s = manager.getNoteText();
+
             System.out.println("from save");
         }
-        links = new HashMap<>();
+        if (manager.getLinks() != null) {
+            links = manager.getLinks();
+        } else {
+            links = new HashMap<>();
+        }
+
 
         doc = NotePanel.getStyledDocument();
 
         // add Listeners
-        doc.addDocumentListener(new NoteDocumentListener(this));
+        docListener = new NoteDocumentListener(this);
+        doc.addDocumentListener(docListener);
         NotePanel.addKeyListener(getKeyListener());
         NotePanel.addHyperlinkListener(getLinkListener());
     }
 
     public void saveNote() {
         manager.setNoteText(NotePanel.getText());
+        manager.setLinks(links);
     }
 
     /** called in toolWindowFactory to diplay tool window */
@@ -148,6 +157,10 @@ public class NoteToolWindow {
                 if (e.getKeyCode() == VK_RIGHT) {
                     escapeLink();
                     System.out.println("escape!");
+                }
+                if (e.getKeyCode() == VK_SPACE ||
+                e.getKeyCode() == VK_TAB) {
+                    docListener.select();
                 }
             }
 

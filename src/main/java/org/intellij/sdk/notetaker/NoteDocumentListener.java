@@ -31,6 +31,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 
+import static java.awt.event.KeyEvent.VK_ENTER;
+
 /**
  * run:
  *  autoLink
@@ -39,6 +41,8 @@ import java.util.HashSet;
  */
 public class NoteDocumentListener implements DocumentListener {
     private final NoteToolWindow noteToolWindow;
+    private JMenuItem selectedItem;
+    private JPopupMenu pm;
 
     public NoteDocumentListener(NoteToolWindow noteToolWindow) {
         this.noteToolWindow = noteToolWindow;
@@ -46,6 +50,7 @@ public class NoteDocumentListener implements DocumentListener {
 
     public void insertUpdate(DocumentEvent e) {
         System.out.println(e);
+        hidePopup();
         autoLink(e);
         noteToolWindow.saveNote();
     }
@@ -59,9 +64,8 @@ public class NoteDocumentListener implements DocumentListener {
     }
 
     private void popUp(HashSet<PsiMethod> foundMethods, int start, HTMLDocument doc) {
-        JPopupMenu pm = new JPopupMenu("Autocomplete");
+        pm = new JPopupMenu("Autocomplete");
         JTextPane textPane = noteToolWindow.getNotePanel();
-
         for (PsiMethod method : foundMethods) {
             ArrayList params = new ArrayList<String>();
             for (PsiParameter param : method.getParameterList().getParameters()) {
@@ -70,6 +74,12 @@ public class NoteDocumentListener implements DocumentListener {
 
             String locId = method.getContainingClass().getQualifiedName() + "." + method.getName() + "#" + String.join(",", params);
             JMenuItem menuItem = new JMenuItem(locId);
+            menuItem.addChangeListener(new ChangeListener() {
+                @Override
+                public void stateChanged(ChangeEvent e) {
+                    selectedItem = getSelected(pm);
+                }
+            });
             menuItem.addActionListener(e -> createLink(start, method, method.getName(), doc));
             pm.add(menuItem);
         }
@@ -91,6 +101,30 @@ public class NoteDocumentListener implements DocumentListener {
         }
     }
 
+    public void select() {
+        if (selectedItem != null) {
+            selectedItem.doClick();
+        }
+    }
+    public static JMenuItem getSelected(JPopupMenu menu) {
+        int itemCount = menu.getComponentCount();
+        for (int i = 0; i < itemCount; i++) {
+            Component component = menu.getComponent(i);
+            if (menu.getComponent(i) instanceof JMenuItem) {
+                JMenuItem currItem = (JMenuItem) component;
+                if(currItem.isArmed()) {
+                    return currItem;
+                }
+            }
+        }
+        return null;
+    }
+
+    public void hidePopup() {
+        if (pm != null) {
+            pm.setVisible(false);
+        }
+    }
     /**
      * checks that the character entered by DocumentEvent e
      * is a whitespace character, and the word preceding that
