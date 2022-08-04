@@ -7,6 +7,8 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.psi.PsiMethod;
 import org.intellij.sdk.notetaker.*;
+import org.intellij.sdk.notetaker.visitors.FindIndividualMethodProcessor;
+import org.intellij.sdk.notetaker.visitors.FindIndividualMethodVisitor;
 import org.intellij.sdk.notetaker.visitors.FindMethodProcessor;
 
 import javax.swing.*;
@@ -84,7 +86,6 @@ public class NoteToolWindow {
             String s = manager.getNoteText();
             System.out.println("from save");
         }
-        //findLinks();
         links = new HashMap<>();
 
 
@@ -135,7 +136,11 @@ public class NoteToolWindow {
                     System.out.println(locId);
                     if (locId != null) {
                         MethodWrapper currMethod = links.get(locId);
+                        if (currMethod == null) {
+                            currMethod = findIndividualMethod(locId);
+                        }
                         if (currMethod != null) {
+                            links.put(locId, currMethod);
                             currMethod.goToMethod();
                         }
                     }
@@ -187,55 +192,28 @@ public class NoteToolWindow {
         }
     }
 
-//
-//
-//    public HashMap<String, MethodWrapper> findLinks() {
-//        NotePanel.getText();
-//        Document d = NotePanel.getDocument();
-//        HashMap<String, MethodWrapper> result = new HashMap<>();
-//        if (d instanceof HTMLDocument) {
-//            HTMLDocument htmlDocument = (HTMLDocument) d;
-//            HTMLDocument.Iterator linkIterator = htmlDocument.getIterator(HTML.Tag.A);
-//            Set<String> locIds = new HashSet<>();
-//            // get all loc ids in the document
-//            while (linkIterator.isValid()) {
-//                String locId = (String) linkIterator.getAttributes().getAttribute("loc-id");
-//                if (locId != null) {
-//                    locIds.add(locId);
-//                }
-//                linkIterator.next();
-//            }
-//            for (String id : locIds) {
-//                MethodWrapper wrapper = findIndividualMethod(id);
-//                if (wrapper != null) {
-//                    result.put(id, wrapper);
-//                }
-//            }
-//        }
-//        return result;
-//    }
-//
-//    public MethodWrapper findIndividualMethod(String locId) {
-//        String enclosingClass = "";
-//        String methodName = null;
-//        String params = null;
-//
-//        String[] paramSplit = locId.split("#");
-//        if (paramSplit.length > 1) {
-//            params = paramSplit[1];
-//        }
-//        int dotIndex = paramSplit[0].lastIndexOf('.');
-//        if (dotIndex >= 0) {
-//            enclosingClass = paramSplit[0].substring(0, dotIndex);
-//            methodName = paramSplit[0].substring(dotIndex + 1);
-//        } else {
-//            methodName = paramSplit[0];
-//        }
-//
-//        FindMethodProcessor processor = new FindMethodProcessor(enclosingClass, methodName, params, project);
-//        processor.runProcessor();
-//        Iterator<PsiMethod> foundMethods = processor.getFoundMethods().stream().iterator();
-//        return foundMethods.hasNext() ? new MethodWrapper(foundMethods.next()) : null;
-//    }
-//
+
+    public MethodWrapper findIndividualMethod(String locId) {
+        String enclosingClass = "";
+        String methodName = "";
+        String params = "";
+
+        String[] paramSplit = locId.split("#");
+        if (paramSplit.length > 1) {
+            params = paramSplit[1];
+        }
+        int dotIndex = paramSplit[0].lastIndexOf('.');
+        if (dotIndex >= 0) {
+            enclosingClass = paramSplit[0].substring(0, dotIndex);
+            methodName = paramSplit[0].substring(dotIndex + 1);
+        } else {
+            methodName = paramSplit[0];
+        }
+
+        FindIndividualMethodProcessor processor = new FindIndividualMethodProcessor(enclosingClass, methodName, params, project);
+        processor.runProcessor();
+        Iterator<PsiMethod> foundMethods = processor.getFoundMethods().stream().iterator();
+        return foundMethods.hasNext() ? new MethodWrapper(foundMethods.next()) : null;
+    }
+
 }
