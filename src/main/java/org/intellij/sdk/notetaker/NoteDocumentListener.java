@@ -1,16 +1,9 @@
 package org.intellij.sdk.notetaker;
 
-import com.intellij.openapi.actionSystem.*;
-import com.intellij.openapi.ui.popup.JBPopup;
-import com.intellij.openapi.ui.popup.JBPopupFactory;
-import com.intellij.openapi.ui.popup.PopupChooserBuilder;
 import com.intellij.psi.PsiMethod;
 import com.intellij.psi.PsiParameter;
-import javafx.scene.control.SelectionMode;
-import javafx.scene.input.KeyCode;
+import org.intellij.sdk.notetaker.visitors.FindMethodProcessor;
 import org.intellij.sdk.notetaker.window.NoteToolWindow;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import javax.swing.event.*;
@@ -21,17 +14,9 @@ import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.html.HTMLDocument;
 import javax.swing.text.html.HTMLEditorKit;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 import java.awt.geom.Rectangle2D;
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashSet;
-
-import static java.awt.event.KeyEvent.VK_ENTER;
 
 /**
  * run:

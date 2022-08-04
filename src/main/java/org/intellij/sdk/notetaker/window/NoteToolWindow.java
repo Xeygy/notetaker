@@ -5,13 +5,16 @@ import com.intellij.openapi.editor.colors.EditorColorsManager;
 import com.intellij.openapi.editor.colors.EditorColorsScheme;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.wm.ToolWindow;
+import com.intellij.psi.PsiMethod;
 import org.intellij.sdk.notetaker.*;
+import org.intellij.sdk.notetaker.visitors.FindMethodProcessor;
 
 import javax.swing.*;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
 import javax.swing.text.*;
 import javax.swing.text.html.HTML;
+import javax.swing.text.html.HTMLDocument;
 import javax.swing.text.html.HTMLEditorKit;
 import javax.swing.text.html.StyleSheet;
 import java.awt.*;
@@ -19,6 +22,8 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
 
 import static java.awt.event.KeyEvent.*;
 
@@ -77,14 +82,10 @@ public class NoteToolWindow {
         if (manager.getNoteText() != null) {
             NotePanel.setText(manager.getNoteText());
             String s = manager.getNoteText();
-
             System.out.println("from save");
         }
-        if (manager.getLinks() != null) {
-            links = manager.getLinks();
-        } else {
-            links = new HashMap<>();
-        }
+        //findLinks();
+        links = new HashMap<>();
 
 
         doc = NotePanel.getStyledDocument();
@@ -98,7 +99,6 @@ public class NoteToolWindow {
 
     public void saveNote() {
         manager.setNoteText(NotePanel.getText());
-        manager.setLinks(links);
     }
 
     /** called in toolWindowFactory to diplay tool window */
@@ -158,8 +158,7 @@ public class NoteToolWindow {
                     escapeLink();
                     System.out.println("escape!");
                 }
-                if (e.getKeyCode() == VK_SPACE ||
-                e.getKeyCode() == VK_TAB) {
+                if (e.getKeyCode() == VK_SPACE) {
                     docListener.select();
                 }
             }
@@ -186,6 +185,57 @@ public class NoteToolWindow {
                 ex.printStackTrace();
             }
         }
-
     }
+
+//
+//
+//    public HashMap<String, MethodWrapper> findLinks() {
+//        NotePanel.getText();
+//        Document d = NotePanel.getDocument();
+//        HashMap<String, MethodWrapper> result = new HashMap<>();
+//        if (d instanceof HTMLDocument) {
+//            HTMLDocument htmlDocument = (HTMLDocument) d;
+//            HTMLDocument.Iterator linkIterator = htmlDocument.getIterator(HTML.Tag.A);
+//            Set<String> locIds = new HashSet<>();
+//            // get all loc ids in the document
+//            while (linkIterator.isValid()) {
+//                String locId = (String) linkIterator.getAttributes().getAttribute("loc-id");
+//                if (locId != null) {
+//                    locIds.add(locId);
+//                }
+//                linkIterator.next();
+//            }
+//            for (String id : locIds) {
+//                MethodWrapper wrapper = findIndividualMethod(id);
+//                if (wrapper != null) {
+//                    result.put(id, wrapper);
+//                }
+//            }
+//        }
+//        return result;
+//    }
+//
+//    public MethodWrapper findIndividualMethod(String locId) {
+//        String enclosingClass = "";
+//        String methodName = null;
+//        String params = null;
+//
+//        String[] paramSplit = locId.split("#");
+//        if (paramSplit.length > 1) {
+//            params = paramSplit[1];
+//        }
+//        int dotIndex = paramSplit[0].lastIndexOf('.');
+//        if (dotIndex >= 0) {
+//            enclosingClass = paramSplit[0].substring(0, dotIndex);
+//            methodName = paramSplit[0].substring(dotIndex + 1);
+//        } else {
+//            methodName = paramSplit[0];
+//        }
+//
+//        FindMethodProcessor processor = new FindMethodProcessor(enclosingClass, methodName, params, project);
+//        processor.runProcessor();
+//        Iterator<PsiMethod> foundMethods = processor.getFoundMethods().stream().iterator();
+//        return foundMethods.hasNext() ? new MethodWrapper(foundMethods.next()) : null;
+//    }
+//
 }

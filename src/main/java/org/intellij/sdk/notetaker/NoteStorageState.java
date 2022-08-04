@@ -12,9 +12,6 @@ import java.util.HashMap;
 class NoteStorageState implements PersistentStateComponent<NoteStorageState> {
     private String text;
 
-    @OptionTag(converter = LinksConverter.class)
-    private HashMap<String, MethodWrapper> links;
-
     public NoteStorageState getState() {
         return this;
     }
@@ -31,10 +28,4 @@ class NoteStorageState implements PersistentStateComponent<NoteStorageState> {
         this.text = text;
     }
 
-    public HashMap<String, MethodWrapper> getLinks() {
-        return links;
-    }
-    public void setLinks(HashMap links) {
-        this.links = links;
-    }
 }

@@ -1,7 +1,5 @@
-package org.intellij.sdk.notetaker;
+package org.intellij.sdk.notetaker.visitors;
 
-import com.google.wireless.android.sdk.stats.IntellijProjectSizeStats;
-import com.intellij.codeInsight.completion.AllClassesGetter;
 import com.intellij.ide.highlighter.JavaFileType;
 import com.intellij.lang.jvm.JvmParameter;
 import com.intellij.openapi.module.Module;
@@ -12,18 +10,14 @@ import com.intellij.pom.Navigatable;
 import com.intellij.psi.*;
 import com.intellij.psi.search.FileTypeIndex;
 import com.intellij.psi.search.GlobalSearchScope;
-import com.intellij.psi.search.PsiSearchHelper;
-import com.intellij.psi.search.searches.AllClassesSearch;
 import com.intellij.util.Processor;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Collection;
 import java.util.HashSet;
 
 public class FindMethodProcessor implements Processor {
 
     private final String methodName;
-    private String containingClass;
     private final HashSet<PsiMethod> foundMethods;
     private final Project project;
 
@@ -37,10 +31,6 @@ public class FindMethodProcessor implements Processor {
         this.project = project;
     }
 
-//    public FindMethodProcessor(String containingClass, String methodName) {
-//        this(methodName);
-//        this.containingClass = containingClass;
-//    }
 
     public HashSet<PsiMethod> getFoundMethods() {
         return foundMethods;
@@ -48,7 +38,7 @@ public class FindMethodProcessor implements Processor {
 
     @Override
     public boolean process(Object o) {
-        FindMethodVisitor visitor = new FindMethodVisitor(containingClass, methodName, foundMethods);
+        FindMethodVisitor visitor = new FindMethodVisitor(methodName, foundMethods);
         if (o instanceof VirtualFile) {
             VirtualFile vf = ((VirtualFile)o);
             PsiFile pf = PsiManager.getInstance(project).findFile(vf);

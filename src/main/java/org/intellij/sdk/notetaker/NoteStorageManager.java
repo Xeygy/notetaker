@@ -21,12 +21,4 @@ public class NoteStorageManager {
         return this.storageState.getText();
     }
 
-    public HashMap<String, MethodWrapper> getLinks() {
-        return this.storageState.getLinks();
-    }
-    public HashMap<String, MethodWrapper> setLinks(HashMap hm) {
-        this.storageState.setLinks(hm);
-        this.storageState.loadState(storageState);
-        return this.storageState.getLinks();
-    }
 }
