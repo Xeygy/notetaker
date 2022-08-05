@@ -6,7 +6,10 @@ import com.intellij.openapi.editor.colors.EditorColorsScheme;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.psi.PsiMethod;
+import com.thoughtworks.qdox.model.expression.Not;
 import org.intellij.sdk.notetaker.*;
+import org.intellij.sdk.notetaker.storage.NoteModel;
+import org.intellij.sdk.notetaker.storage.NoteStorageManager;
 import org.intellij.sdk.notetaker.visitors.FindIndividualMethodProcessor;
 
 import javax.swing.*;
@@ -33,7 +36,7 @@ public class NoteWindow {
     private final StyledDocument doc;
 
     public Style defaultStyle;
-    private NoteStorageManager manager;
+    private NoteModel model;
     private NoteDocumentListener docListener;
     private boolean isInProgress;
     private HashMap<String, MethodWrapper> links;
@@ -52,9 +55,9 @@ public class NoteWindow {
      * HyperLinkListener
      * DocParser (for finding links)
      * */
-    public NoteWindow(ToolWindow toolWindow, Project project) {
+    public NoteWindow(ToolWindow toolWindow, Project project, NoteModel model) {
         this.project = project;
-
+        this.model = model;
         HTMLEditorKit kit = new CustomHTMLEditorKit();
         NotePanel.setEditorKit(kit);
 
@@ -75,12 +78,7 @@ public class NoteWindow {
         css.addRule("a { color: " + rgb + ";}");
 
         // load existing note if it exists
-        manager = new NoteStorageManager(project);
-        if (manager.getNoteText() != null) {
-            NotePanel.setText(manager.getNoteText());
-            String s = manager.getNoteText();
-            System.out.println("from save");
-        }
+        NotePanel.setText(model.getContent());
         links = new HashMap<>();
         doc = NotePanel.getStyledDocument();
 
@@ -92,7 +90,7 @@ public class NoteWindow {
     }
 
     public void saveNote() {
-        manager.setNoteText(NotePanel.getText());
+        model.setContent(NotePanel.getText());
     }
 
     /** called in toolWindowFactory to diplay tool window */
@@ -158,10 +156,6 @@ public class NoteWindow {
                 }
                 if (e.getKeyCode() == VK_SPACE) {
                     docListener.select();
-                    int components = NotePanel.getComponentCount();
-                    NotePanel.add(new JSlider());
-                    NotePanel.validate();
-                    NotePanel.repaint();
                 }
             }
 

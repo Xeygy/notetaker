@@ -10,6 +10,6 @@
     <extensions defaultExtensionNs="com.intellij">
         <toolWindow factoryClass="org.intellij.sdk.notetaker.window.MyToolWindowFactory" id="Notetaker" anchor="right"/>
         <toolWindow factoryClass="org.intellij.sdk.notetaker.window.AddRemoveToolWindowFactory" id="Notes" anchor="right"/>
-        <projectService serviceImplementation="org.intellij.sdk.notetaker.NoteStorageState"/>
+        <projectService serviceImplementation="org.intellij.sdk.notetaker.storage.NoteStorageState"/>
     </extensions>
 </idea-plugin>

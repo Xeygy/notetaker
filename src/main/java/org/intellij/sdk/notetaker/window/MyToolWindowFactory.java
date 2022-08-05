@@ -13,10 +13,13 @@ import com.intellij.ui.content.ContentManager;
 import com.intellij.ui.table.JBTable;
 import com.intellij.ui.table.TableView;
 import com.intellij.ui.tabs.impl.JBTabsImpl;
+import org.intellij.sdk.notetaker.storage.NoteModel;
+import org.intellij.sdk.notetaker.storage.NoteStorageManager;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import java.util.ArrayList;
+import java.util.List;
 
 
 public class MyToolWindowFactory implements ToolWindowFactory {
@@ -31,11 +34,18 @@ public class MyToolWindowFactory implements ToolWindowFactory {
         ContentManager cm = toolWindow.getContentManager();
         ContentFactory contentFactory = ContentFactory.SERVICE.getInstance();
 
+        NoteStorageManager manager = new NoteStorageManager(project);
+        List<NoteModel> noteList = manager.getNoteList();
+        if (noteList != null) {
+            //noteList.add(new NoteModel("test", ""));
+            for (NoteModel note : noteList) {
+                NoteWindow noteWindow = new NoteWindow(toolWindow, project, note);
+                Content noteTab = contentFactory.createContent(noteWindow.getContent(), note.getName(), false);
+                cm.addContent(noteTab);
+            }
+        } else {
+            manager.setNoteList(new ArrayList<>());
 
-        for (int i = 1; i<= 2; i++) {
-            NoteWindow noteWindow = new NoteWindow(toolWindow, project);
-            Content noteTab = contentFactory.createContent(noteWindow.getContent(), "Notes"+i, false);
-            cm.addContent(noteTab);
         }
     }
 

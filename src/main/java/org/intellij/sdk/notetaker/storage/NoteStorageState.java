@@ -1,16 +1,19 @@
-package org.intellij.sdk.notetaker;
+package org.intellij.sdk.notetaker.storage;
 
 import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.components.State;
 import com.intellij.util.xmlb.XmlSerializerUtil;
 import com.intellij.util.xmlb.annotations.OptionTag;
+import com.thoughtworks.qdox.model.expression.Not;
 
-import java.util.HashMap;
+import java.util.List;
 
 
 @State(name = "Notetaker")
 class NoteStorageState implements PersistentStateComponent<NoteStorageState> {
-    private String text;
+
+    @OptionTag(converter = NoteModelStorageConverter.class)
+    private NoteModelStorage noteModelStorage;
 
     public NoteStorageState getState() {
         return this;
@@ -20,12 +23,12 @@ class NoteStorageState implements PersistentStateComponent<NoteStorageState> {
         XmlSerializerUtil.copyBean(state, this);
     }
 
-    public String getText() {
-        return text;
+    public NoteModelStorage getNoteModelStorage() {
+        return noteModelStorage;
     }
 
-    public void setText(String text) {
-        this.text = text;
+    public void setNoteModelStorage(NoteModelStorage storage) {
+        noteModelStorage = storage;
     }
 
 }
