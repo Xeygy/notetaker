@@ -3,7 +3,7 @@ package org.intellij.sdk.notetaker;
 import com.intellij.psi.PsiMethod;
 import com.intellij.psi.PsiParameter;
 import org.intellij.sdk.notetaker.visitors.FindMethodProcessor;
-import org.intellij.sdk.notetaker.window.NoteToolWindow;
+import org.intellij.sdk.notetaker.window.NoteWindow;
 
 import javax.swing.*;
 import javax.swing.event.*;
@@ -25,11 +25,11 @@ import java.util.HashSet;
  * every time the doc is updated
  */
 public class NoteDocumentListener implements DocumentListener {
-    private final NoteToolWindow noteToolWindow;
+    private final NoteWindow noteToolWindow;
     private JMenuItem selectedItem;
     private JPopupMenu pm;
 
-    public NoteDocumentListener(NoteToolWindow noteToolWindow) {
+    public NoteDocumentListener(NoteWindow noteToolWindow) {
         this.noteToolWindow = noteToolWindow;
     }
 

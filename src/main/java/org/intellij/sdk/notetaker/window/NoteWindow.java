@@ -8,28 +8,23 @@ import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.psi.PsiMethod;
 import org.intellij.sdk.notetaker.*;
 import org.intellij.sdk.notetaker.visitors.FindIndividualMethodProcessor;
-import org.intellij.sdk.notetaker.visitors.FindIndividualMethodVisitor;
-import org.intellij.sdk.notetaker.visitors.FindMethodProcessor;
 
 import javax.swing.*;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
 import javax.swing.text.*;
 import javax.swing.text.html.HTML;
-import javax.swing.text.html.HTMLDocument;
 import javax.swing.text.html.HTMLEditorKit;
 import javax.swing.text.html.StyleSheet;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
-import java.util.Set;
 
 import static java.awt.event.KeyEvent.*;
 
-public class NoteToolWindow {
+public class NoteWindow {
     private JTextPane NotePanel;
     private JPanel NotePanelContent;
     private JScrollPane ScrollPane;
@@ -57,7 +52,7 @@ public class NoteToolWindow {
      * HyperLinkListener
      * DocParser (for finding links)
      * */
-    public NoteToolWindow(ToolWindow toolWindow, Project project) {
+    public NoteWindow(ToolWindow toolWindow, Project project) {
         this.project = project;
 
         HTMLEditorKit kit = new CustomHTMLEditorKit();
@@ -87,8 +82,6 @@ public class NoteToolWindow {
             System.out.println("from save");
         }
         links = new HashMap<>();
-
-
         doc = NotePanel.getStyledDocument();
 
         // add Listeners
@@ -165,6 +158,10 @@ public class NoteToolWindow {
                 }
                 if (e.getKeyCode() == VK_SPACE) {
                     docListener.select();
+                    int components = NotePanel.getComponentCount();
+                    NotePanel.add(new JSlider());
+                    NotePanel.validate();
+                    NotePanel.repaint();
                 }
             }
 
