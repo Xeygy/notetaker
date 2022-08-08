@@ -10,6 +10,11 @@ public class NoteModel {
         this.content = content;
     }
 
+    @Override
+    public String toString() {
+        return "name='" + name;
+    }
+
     public String getName() {
         return name;
     }
