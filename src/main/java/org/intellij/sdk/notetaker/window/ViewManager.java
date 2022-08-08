@@ -10,10 +10,9 @@ import com.intellij.ui.content.ContentFactory;
 import com.intellij.ui.content.ContentManager;
 import org.intellij.sdk.notetaker.storage.NoteModel;
 
-import java.util.ArrayList;
 import java.util.List;
 
-/** Class for updating the window in AddRemoveToolWindow */
+/** Class for updating the window in AddRemoveToolWindow and NoteWindow */
 public class ViewManager {
     //Model & View for the window
     private JBList<NoteModel> listView;
@@ -39,31 +38,49 @@ public class ViewManager {
     public void addNote(NoteModel newNote) {
         listModel.add(newNote);
         storedList.add(newNote);
-        updateNoteWindow();
+        addToNoteWindow(newNote);
     }
 
     public void removeSelectedNote() {
         int selectedIndex = listView.getSelectedIndex();
         if (selectedIndex > -1) {
             listModel.remove(selectedIndex);
+            removeFromNoteWindow(storedList.get(selectedIndex));
             storedList.remove(selectedIndex);
-            updateNoteWindow();
         }
     }
 
-    /** Updates NoteWindow to match AddRemoveToolWindow */
-    public void updateNoteWindow() {
-        //Duplicate code from MyToolWindowFactory
+    /** methods for updating the NoteWindow ToolWindow */
+    public void addToNoteWindow(NoteModel newNote) {
         ToolWindow toolWindow = ToolWindowManager.getInstance(project).getToolWindow("Notetaker");
-        ContentManager cm = toolWindow.getContentManager();
-        ContentFactory contentFactory = ContentFactory.SERVICE.getInstance();
-        cm.removeAllContents(true);
         if (toolWindow != null) {
-            for (NoteModel note : storedList) {
-                NoteWindow noteWindow = new NoteWindow(toolWindow, project, note);
-                Content noteTab = contentFactory.createContent(noteWindow.getContent(), note.getName(), false);
-                cm.addContent(noteTab);
+            ContentManager cm = toolWindow.getContentManager();
+            ContentFactory contentFactory = ContentFactory.SERVICE.getInstance();
+            NoteWindow noteWindow = new NoteWindow(toolWindow, project, newNote);
+            Content noteTab = contentFactory.createContent(noteWindow.getContent(), newNote.getName(), false);
+            cm.addContent(noteTab);
+        }
+    }
+
+    public void removeFromNoteWindow(NoteModel note) {
+        ToolWindow toolWindow = ToolWindowManager.getInstance(project).getToolWindow("Notetaker");
+        if (toolWindow != null) {
+            ContentManager cm = toolWindow.getContentManager();
+            Content noteWindow = findContentWithDisplayName(cm, note.getName());
+            if (noteWindow != null) {
+                cm.removeContent(noteWindow, true);
             }
         }
+    }
+    /** assumes display names are unique, returns first matching content it finds,
+     * null otherwise */
+    public Content findContentWithDisplayName(ContentManager cm, String name) {
+        Content[] contents = cm.getContents();
+        for (Content content : contents) {
+            if (name.equals(content.getDisplayName())) {
+                return content;
+            }
+        }
+        return null;
     }
 }
