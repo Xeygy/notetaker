@@ -21,10 +21,8 @@ public class AddRemoveWindow {
     private ViewManager viewManager;
 
     NoteStorageManager storageManager;
-    private Project project;
 
     public AddRemoveWindow(Project project) {
-        this.project = project;
         storageManager = new NoteStorageManager(project);
 
         //null check if first time using app
@@ -39,8 +37,8 @@ public class AddRemoveWindow {
         viewManager.getListView().addMouseListener(clickListener());
 
         ToolbarDecorator decorator = ToolbarDecorator.createDecorator(viewManager.getListView());
-        decorator.setAddAction(button -> {addNoteAction();});
-        decorator.setRemoveAction(button -> {removeNoteAction();});
+        decorator.setAddAction(button -> addNoteAction());
+        decorator.setRemoveAction(button -> removeNoteAction());
         decorator.disableDownAction();
         decorator.disableUpAction();
 
@@ -62,24 +60,10 @@ public class AddRemoveWindow {
     }
 
     public void addNoteAction() {
-        NoteModel newNote = new NoteModel(getRandomString(), "");
-        viewManager.addNote(newNote);
+        viewManager.addNote();
     }
     public void removeNoteAction() {
         viewManager.removeSelectedNote();
     }
 
-
-    protected String getRandomString() {
-        String SALTCHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
-        StringBuilder salt = new StringBuilder();
-        Random rnd = new Random();
-        while (salt.length() < 6) { // length of the random string.
-            int index = (int) (rnd.nextFloat() * SALTCHARS.length());
-            salt.append(SALTCHARS.charAt(index));
-        }
-        String saltStr = salt.toString();
-        return saltStr;
-
-    }
 }

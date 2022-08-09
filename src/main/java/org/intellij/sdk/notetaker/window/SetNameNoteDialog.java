@@ -22,9 +22,13 @@ public class SetNameNoteDialog extends DialogWrapper {
     private JTextField nameField;
 
     public SetNameNoteDialog(List<NoteModel> existingNotes) {
+        this(existingNotes, "Set Name");
+    }
+
+    public SetNameNoteDialog(List<NoteModel> existingNotes, String dialogTitle) {
         super(true); // use current window as parent
         this.existingNotes = existingNotes;
-        setTitle("Set Name");
+        setTitle(dialogTitle);
         init();
     }
 

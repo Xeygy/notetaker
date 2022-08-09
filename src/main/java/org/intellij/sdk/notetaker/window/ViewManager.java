@@ -51,10 +51,15 @@ public class ViewManager {
         return listView;
     }
 
-    public void addNote(NoteModel newNote) {
-        listModel.add(newNote);
-        storedList.add(newNote);
-        addToNoteWindow(newNote);
+    public void addNote() {
+        SetNameNoteDialog dialog = new SetNameNoteDialog(storedList, "New Note Name");
+        if (dialog.showAndGet()) {
+            String newNoteName = dialog.getFieldValue();
+            NoteModel newNote = new NoteModel(newNoteName, "");
+            listModel.add(newNote);
+            storedList.add(newNote);
+            addToNoteWindow(newNote);
+        }
     }
 
     public void removeSelectedNote() {
