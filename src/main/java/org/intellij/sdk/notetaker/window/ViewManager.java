@@ -10,15 +10,19 @@ import com.intellij.ui.content.ContentFactory;
 import com.intellij.ui.content.ContentManager;
 import org.intellij.sdk.notetaker.storage.NoteModel;
 
+import javax.swing.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.List;
+import java.util.Set;
 
 /** Class for updating the window in AddRemoveToolWindow and NoteWindow */
 public class ViewManager {
-    //Model & View for the window
+    //Model & View for AddRemoveToolWindow
     private JBList<NoteModel> listView;
     private CollectionListModel<NoteModel> listModel;
 
-    //Actual list that gets saved in the background
+    //Actual list that gets saved in storage
     private List<NoteModel> storedList;
 
     private Project project;
@@ -29,6 +33,18 @@ public class ViewManager {
         this.project = project;
         listModel = new CollectionListModel<>(noteList);
         listView = new JBList<>(listModel);
+        listView.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent e) {
+                if (SwingUtilities.isRightMouseButton(e)) {
+                    SetNameNoteDialog dialog = new SetNameNoteDialog(storedList);
+                    if (dialog.showAndGet()) {
+                        // user pressed OK
+                        String newNoteName = dialog.getFieldValue();
+                    }
+                }
+            }
+        });
     }
 
     public JBList<NoteModel> getListView() {
