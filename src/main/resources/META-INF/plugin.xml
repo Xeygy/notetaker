@@ -8,7 +8,7 @@
     <depends>com.intellij.java</depends>
 
     <extensions defaultExtensionNs="com.intellij">
-        <toolWindow factoryClass="org.intellij.sdk.notetaker.window.MyToolWindowFactory" id="Notetaker" anchor="right" canCloseContents="true"/>
+        <toolWindow factoryClass="org.intellij.sdk.notetaker.window.NoteToolWindowFactory" id="Notetaker" anchor="right" canCloseContents="true"/>
         <toolWindow factoryClass="org.intellij.sdk.notetaker.window.AddRemoveToolWindowFactory" id="Notes" anchor="right"/>
         <projectService serviceImplementation="org.intellij.sdk.notetaker.storage.NoteStorageState"/>
     </extensions>
