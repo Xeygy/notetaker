@@ -39,6 +39,7 @@ public class AddRemoveWindow {
         ToolbarDecorator decorator = ToolbarDecorator.createDecorator(viewManager.getListView());
         decorator.setAddAction(button -> addNoteAction());
         decorator.setRemoveAction(button -> removeNoteAction());
+        decorator.setEditAction(button -> renameNoteAction());
         decorator.disableDownAction();
         decorator.disableUpAction();
 
@@ -64,6 +65,9 @@ public class AddRemoveWindow {
     }
     public void removeNoteAction() {
         viewManager.removeSelectedNote();
+    }
+    public void renameNoteAction() {
+        viewManager.renameSelectedNote();
     }
 
 }

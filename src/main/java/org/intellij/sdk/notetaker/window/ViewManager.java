@@ -71,6 +71,19 @@ public class ViewManager {
         }
     }
 
+    public void renameSelectedNote() {
+        int selectedIndex = listView.getSelectedIndex();
+        if (selectedIndex > -1) {
+            SetNameNoteDialog dialog = new SetNameNoteDialog(storedList, "Rename");
+            if (dialog.showAndGet()) {
+                String newName = dialog.getFieldValue();
+                renameInNoteWindow(storedList.get(selectedIndex), newName);
+                listModel.getElementAt(selectedIndex).setName(newName);
+                //storedList.remove(selectedIndex); not needed, noteModel is same instance
+            }
+        }
+    }
+
     /** methods for updating the NoteWindow ToolWindow */
     public void addToNoteWindow(NoteModel newNote) {
         ToolWindow toolWindow = ToolWindowManager.getInstance(project).getToolWindow("Notetaker");
@@ -90,6 +103,17 @@ public class ViewManager {
             Content noteWindow = findContentWithDisplayName(cm, note.getName());
             if (noteWindow != null) {
                 cm.removeContent(noteWindow, true);
+            }
+        }
+    }
+
+    public void renameInNoteWindow(NoteModel note, String newName) {
+        ToolWindow toolWindow = ToolWindowManager.getInstance(project).getToolWindow("Notetaker");
+        if (toolWindow != null) {
+            ContentManager cm = toolWindow.getContentManager();
+            Content noteWindow = findContentWithDisplayName(cm, note.getName());
+            if (noteWindow != null) {
+                noteWindow.setDisplayName(newName);
             }
         }
     }
