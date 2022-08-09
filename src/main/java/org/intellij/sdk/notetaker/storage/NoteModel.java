@@ -12,7 +12,7 @@ public class NoteModel {
 
     @Override
     public String toString() {
-        return "name='" + name;
+        return name;
     }
 
     public String getName() {
