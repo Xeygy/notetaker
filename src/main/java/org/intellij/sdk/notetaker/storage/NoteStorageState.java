@@ -5,6 +5,7 @@ import com.intellij.openapi.components.State;
 import com.intellij.util.xmlb.XmlSerializerUtil;
 import com.intellij.util.xmlb.annotations.OptionTag;
 import com.thoughtworks.qdox.model.expression.Not;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
@@ -14,12 +15,13 @@ class NoteStorageState implements PersistentStateComponent<NoteStorageState> {
 
     @OptionTag(converter = NoteModelStorageConverter.class)
     private NoteModelStorage noteModelStorage;
+    private List<String> openTabNames;
 
     public NoteStorageState getState() {
         return this;
     }
 
-    public void loadState(NoteStorageState state) {
+    public void loadState(@NotNull NoteStorageState state) {
         XmlSerializerUtil.copyBean(state, this);
     }
 
@@ -31,4 +33,11 @@ class NoteStorageState implements PersistentStateComponent<NoteStorageState> {
         noteModelStorage = storage;
     }
 
+    public List<String> getOpenTabNames() {
+        return openTabNames;
+    }
+
+    public void setOpenTabNames(List<String> openTabNames) {
+        this.openTabNames = openTabNames;
+    }
 }

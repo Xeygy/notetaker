@@ -29,4 +29,29 @@ public class NoteStorageManager {
         return getNoteList();
     }
 
+    //assumes unique note names
+    public List<NoteModel> getOpenTabs() {
+        if (storageState.getOpenTabNames() == null) {
+            storageState.setOpenTabNames(new ArrayList<>());
+        }
+        List<String> openTabNames = storageState.getOpenTabNames();
+        List<NoteModel> allNotes = getNoteList();
+        List<NoteModel> openTabs = new ArrayList<>();
+        for (String tab : openTabNames) {
+            for (NoteModel note : allNotes) {
+                if (note.getName().equals(tab)) {
+                   openTabs.add(note);
+                }
+            }
+        }
+        return openTabs;
+    }
+
+    public void removeFromOpenTabs(String tabName) {
+        storageState.getOpenTabNames().remove(tabName);
+    }
+    public void addToOpenTabs(String tabName) {
+        storageState.getOpenTabNames().add(tabName);
+    }
+
 }

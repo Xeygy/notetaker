@@ -3,9 +3,7 @@ package org.intellij.sdk.notetaker.window;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.openapi.wm.ToolWindowFactory;
-import com.intellij.ui.content.Content;
-import com.intellij.ui.content.ContentFactory;
-import com.intellij.ui.content.ContentManager;
+import com.intellij.ui.content.*;
 
 import org.intellij.sdk.notetaker.storage.NoteModel;
 import org.intellij.sdk.notetaker.storage.NoteStorageManager;
@@ -28,18 +26,37 @@ public class NoteToolWindowFactory implements ToolWindowFactory {
         ContentFactory contentFactory = ContentFactory.SERVICE.getInstance();
 
         NoteStorageManager manager = new NoteStorageManager(project);
-        List<NoteModel> noteList = manager.getNoteList();
-        if (noteList != null) {
-            //noteList.add(new NoteModel("test", ""));
-            for (NoteModel note : noteList) {
+        List<NoteModel> openTabs = manager.getOpenTabs();
+        if (openTabs != null) {
+            //openTabs.add(new NoteModel("test", ""));
+            for (NoteModel note : openTabs) {
                 NoteWindow noteWindow = new NoteWindow(toolWindow, project, note);
                 Content noteTab = contentFactory.createContent(noteWindow.getContent(), note.getName(), false);
                 cm.addContent(noteTab);
             }
         } else {
             manager.setNoteList(new ArrayList<>());
-
         }
+        cm.addContentManagerListener(tabStorageManager(manager));
+    }
+
+    /** responsible for detecting when open tabs are changed in the content manager */
+    public ContentManagerListener tabStorageManager(NoteStorageManager manager) {
+        return new ContentManagerListener() {
+            @Override
+            public void contentRemoved(@NotNull ContentManagerEvent event) {
+                ContentManagerListener.super.contentRemoved(event);
+                String removedName = event.getContent().getDisplayName();
+                manager.removeFromOpenTabs(removedName);
+            }
+
+            @Override
+            public void contentAdded(@NotNull ContentManagerEvent event) {
+                ContentManagerListener.super.contentAdded(event);
+                String addedName = event.getContent().getDisplayName();
+                manager.addToOpenTabs(addedName);
+            }
+        };
     }
 
 }
