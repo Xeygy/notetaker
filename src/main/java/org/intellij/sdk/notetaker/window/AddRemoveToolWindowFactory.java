@@ -23,6 +23,7 @@ public class AddRemoveToolWindowFactory implements ToolWindowFactory {
     public void createToolWindowContent(@NotNull Project project, @NotNull ToolWindow toolWindow) {
         ContentManager cm = toolWindow.getContentManager();
         ContentFactory contentFactory = ContentFactory.SERVICE.getInstance();
+
         AddRemoveWindow window = new AddRemoveWindow(project);
         Content noteTab = contentFactory.createContent(window.getComponent(), "", false);
         cm.addContent(noteTab);

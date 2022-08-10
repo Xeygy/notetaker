@@ -49,11 +49,9 @@ public class AddRemoveWindow {
     public MouseListener clickListener() {
         MouseListener l = new MouseAdapter() {
             public void mouseClicked(MouseEvent evt) {
-                JList list = (JList)evt.getSource();
                 if (evt.getClickCount() == 2) {
                     // Double-click detected
-                    int index = list.locationToIndex(evt.getPoint());
-                    //String selectedFile = listForView.getElementAt(index).getName();
+                    viewManager.openSelectedNote();
                 }
             }
         };

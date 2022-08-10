@@ -84,15 +84,28 @@ public class ViewManager {
         }
     }
 
+    public void openSelectedNote() {
+        NoteModel selected = listView.getSelectedValue();
+        if (selected != null) {
+            addToNoteWindow(selected);
+        }
+    }
+
     /** methods for updating the NoteWindow ToolWindow */
     public void addToNoteWindow(NoteModel newNote) {
         ToolWindow toolWindow = ToolWindowManager.getInstance(project).getToolWindow("Notetaker");
         if (toolWindow != null) {
             ContentManager cm = toolWindow.getContentManager();
             ContentFactory contentFactory = ContentFactory.SERVICE.getInstance();
-            NoteWindow noteWindow = new NoteWindow(toolWindow, project, newNote);
-            Content noteTab = contentFactory.createContent(noteWindow.getContent(), newNote.getName(), false);
-            cm.addContent(noteTab);
+
+            Content existingNote = cm.findContent(newNote.getName());
+            // note not already open in NoteWindow
+            if (existingNote == null) {
+                NoteWindow noteWindow = new NoteWindow(toolWindow, project, newNote);
+                Content noteTab = contentFactory.createContent(noteWindow.getContent(), newNote.getName(), false);
+                cm.addContent(noteTab);
+            }
+            changeFocusToNoteWindow(newNote);
         }
     }
 
@@ -117,6 +130,22 @@ public class ViewManager {
             }
         }
     }
+
+    /** TODO: RequestFocus DOES NOT WORK
+     * changes focus only if a tab with the same name as the note is in the noteWindow */
+    public void changeFocusToNoteWindow(NoteModel note) {
+        ToolWindow toolWindow = ToolWindowManager.getInstance(project).getToolWindow("Notetaker");
+        if (toolWindow != null) {
+            ContentManager cm = toolWindow.getContentManager();
+            ContentFactory contentFactory = ContentFactory.SERVICE.getInstance();
+
+            Content selectedNote = cm.findContent(note.getName());
+            if (selectedNote != null) {
+                cm.requestFocus(selectedNote, true);
+            }
+        }
+
+        }
     /** assumes display names are unique, returns first matching content it finds,
      * null otherwise */
     public Content findContentWithDisplayName(ContentManager cm, String name) {
