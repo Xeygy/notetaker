@@ -1,16 +1,11 @@
 package org.intellij.sdk.notetaker.window;
 
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.ui.ComponentValidator;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.ui.ValidationInfo;
-import com.intellij.ui.DocumentAdapter;
 import org.intellij.sdk.notetaker.storage.NoteModel;
-import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 import javax.swing.*;
-import javax.swing.event.DocumentEvent;
 import java.awt.*;
 import java.util.List;
 import java.util.stream.Collectors;

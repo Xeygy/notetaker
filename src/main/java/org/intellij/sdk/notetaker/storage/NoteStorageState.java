@@ -4,7 +4,6 @@ import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.components.State;
 import com.intellij.util.xmlb.XmlSerializerUtil;
 import com.intellij.util.xmlb.annotations.OptionTag;
-import com.thoughtworks.qdox.model.expression.Not;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;

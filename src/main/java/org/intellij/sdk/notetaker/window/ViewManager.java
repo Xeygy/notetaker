@@ -14,7 +14,6 @@ import javax.swing.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.List;
-import java.util.Set;
 
 /** Class for updating the window in AddRemoveToolWindow and NoteWindow */
 public class ViewManager {

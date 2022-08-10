@@ -6,10 +6,10 @@ import com.intellij.openapi.editor.colors.EditorColorsScheme;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.psi.PsiMethod;
-import com.thoughtworks.qdox.model.expression.Not;
-import org.intellij.sdk.notetaker.*;
+import org.intellij.sdk.notetaker.CustomHTMLEditorKit;
+import org.intellij.sdk.notetaker.MethodWrapper;
+import org.intellij.sdk.notetaker.NoteDocumentListener;
 import org.intellij.sdk.notetaker.storage.NoteModel;
-import org.intellij.sdk.notetaker.storage.NoteStorageManager;
 import org.intellij.sdk.notetaker.visitors.FindIndividualMethodProcessor;
 
 import javax.swing.*;
@@ -25,7 +25,8 @@ import java.awt.event.KeyListener;
 import java.util.HashMap;
 import java.util.Iterator;
 
-import static java.awt.event.KeyEvent.*;
+import static java.awt.event.KeyEvent.VK_RIGHT;
+import static java.awt.event.KeyEvent.VK_SPACE;
 
 public class NoteWindow {
     private JTextPane NotePanel;

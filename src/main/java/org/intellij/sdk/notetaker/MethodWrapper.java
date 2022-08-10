@@ -4,7 +4,6 @@ import com.intellij.pom.Navigatable;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiMethod;
 import com.intellij.psi.PsiParameter;
-import com.intellij.psi.impl.source.PsiMethodImpl;
 
 import java.util.ArrayList;
 

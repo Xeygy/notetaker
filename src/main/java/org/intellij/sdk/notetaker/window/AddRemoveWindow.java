@@ -1,12 +1,7 @@
 package org.intellij.sdk.notetaker.window;
 
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.wm.ToolWindow;
-import com.intellij.openapi.wm.ToolWindowManager;
 import com.intellij.ui.ToolbarDecorator;
-import com.intellij.ui.content.Content;
-import com.intellij.ui.content.ContentFactory;
-import com.intellij.ui.content.ContentManager;
 import org.intellij.sdk.notetaker.storage.NoteModel;
 import org.intellij.sdk.notetaker.storage.NoteStorageManager;
 
@@ -15,7 +10,6 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.ArrayList;
-import java.util.Random;
 
 public class AddRemoveWindow {
     private ViewManager viewManager;

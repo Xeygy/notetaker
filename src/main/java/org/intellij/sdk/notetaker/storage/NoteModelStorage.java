@@ -1,6 +1,5 @@
 package org.intellij.sdk.notetaker.storage;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /** Class used for serialization */
