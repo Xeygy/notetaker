@@ -43,4 +43,4 @@ between IDE Restarts
   - maps
   - enums
 - to support persistence of other classes, you need to write a converter 
-(i.e. [NoteModelStorageConverter](#### `NoteModelStorageConverter`))
+(i.e. [NoteModelStorageConverter](#notemodelstorageconverter--notemodelstorage))
