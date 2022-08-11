@@ -41,7 +41,8 @@ the name of the method and select the specific method declaration
 from the autocomplete popup with **Space**.
 
 To go to the declaration, **double-click** on the link.
-
+## Documentation
+Find the [dev guide here.](dev-guide.md) 
 ## Installation
 - To get a build of the extension:
   - Run intellij/buildPlugin using Gradle
