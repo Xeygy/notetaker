@@ -43,15 +43,12 @@ from the autocomplete popup with **Space**.
 To go to the declaration, **double-click** on the link.
 
 ## Installation
-
-As the extension is still in development, no official releases are out.
-- To test the extension:
-  - clone the repo in IntelliJ and run the project
-- To get a working build of the extension:
+- To get a build of the extension:
   - Run intellij/buildPlugin using Gradle
   - Find the plugin .zip under build/distributions/ (should be notetaker-0.0.1.zip or similar)
   - Install the .zip manually using<kbd>Settings/Preferences</kbd> > <kbd>Plugins</kbd> > <kbd>⚙️</kbd> > <kbd>Install plugin from disk...</kbd>
-
+- To test the extension:
+  - clone the repo in IntelliJ and run the project
 
 ---
 Plugin based on the [IntelliJ Platform Plugin Template][template].
