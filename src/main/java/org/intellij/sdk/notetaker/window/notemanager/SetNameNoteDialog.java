@@ -1,4 +1,4 @@
-package org.intellij.sdk.notetaker.window;
+package org.intellij.sdk.notetaker.window.notemanager;
 
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.ui.ValidationInfo;

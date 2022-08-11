@@ -1,4 +1,4 @@
-package org.intellij.sdk.notetaker.window;
+package org.intellij.sdk.notetaker.window.texteditor;
 
 import com.intellij.openapi.editor.colors.CodeInsightColors;
 import com.intellij.openapi.editor.colors.EditorColorsManager;
@@ -6,9 +6,6 @@ import com.intellij.openapi.editor.colors.EditorColorsScheme;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.psi.PsiMethod;
-import org.intellij.sdk.notetaker.CustomHTMLEditorKit;
-import org.intellij.sdk.notetaker.MethodWrapper;
-import org.intellij.sdk.notetaker.NoteDocumentListener;
 import org.intellij.sdk.notetaker.storage.NoteModel;
 import org.intellij.sdk.notetaker.visitors.FindIndividualMethodProcessor;
 

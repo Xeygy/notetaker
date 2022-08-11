@@ -1,4 +1,4 @@
-package org.intellij.sdk.notetaker.window;
+package org.intellij.sdk.notetaker.window.notemanager;
 
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.wm.ToolWindow;
@@ -9,6 +9,8 @@ import com.intellij.ui.content.Content;
 import com.intellij.ui.content.ContentFactory;
 import com.intellij.ui.content.ContentManager;
 import org.intellij.sdk.notetaker.storage.NoteModel;
+import org.intellij.sdk.notetaker.window.notemanager.SetNameNoteDialog;
+import org.intellij.sdk.notetaker.window.texteditor.NoteWindow;
 
 import javax.swing.*;
 import java.awt.event.MouseAdapter;

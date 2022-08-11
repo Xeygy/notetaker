@@ -1,4 +1,4 @@
-package org.intellij.sdk.notetaker;
+package org.intellij.sdk.notetaker.window.texteditor;
 
 import com.intellij.pom.Navigatable;
 import com.intellij.psi.PsiElement;
@@ -15,7 +15,7 @@ public class MethodWrapper implements java.io.Serializable {
     }
 
     public String getLocId() {
-        ArrayList params = new ArrayList<String>();
+        ArrayList<String> params = new ArrayList<>();
         for (PsiParameter param : method.getParameterList().getParameters()) {
             params.add(param.getType().getCanonicalText());
         }

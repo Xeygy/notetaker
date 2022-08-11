@@ -1,4 +1,4 @@
-package org.intellij.sdk.notetaker;
+package org.intellij.sdk.notetaker.window.texteditor;
 
 import javax.swing.*;
 import javax.swing.text.html.HTMLEditorKit;

@@ -1,9 +1,8 @@
-package org.intellij.sdk.notetaker;
+package org.intellij.sdk.notetaker.window.texteditor;
 
 import com.intellij.psi.PsiMethod;
 import com.intellij.psi.PsiParameter;
 import org.intellij.sdk.notetaker.visitors.FindMethodProcessor;
-import org.intellij.sdk.notetaker.window.NoteWindow;
 
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
@@ -55,7 +54,7 @@ public class NoteDocumentListener implements DocumentListener {
         pm = new JPopupMenu("Autocomplete");
         JTextPane textPane = noteToolWindow.getNotePanel();
         for (PsiMethod method : foundMethods) {
-            ArrayList params = new ArrayList<String>();
+            ArrayList<String> params = new ArrayList<>();
             for (PsiParameter param : method.getParameterList().getParameters()) {
                 params.add(param.getType().getCanonicalText());
             }
