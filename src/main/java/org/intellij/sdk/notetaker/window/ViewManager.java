@@ -140,7 +140,8 @@ public class ViewManager {
 
             Content selectedNote = cm.findContent(note.getName());
             if (selectedNote != null) {
-                cm.requestFocus(selectedNote, true);
+                cm.setSelectedContent(selectedNote);
+                toolWindow.show();
             }
         }
 
