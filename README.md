@@ -41,8 +41,10 @@ the name of the method and select the specific method declaration
 from the autocomplete popup with **Space**.
 
 To go to the declaration, **double-click** on the link.
-## Documentation
-Find the [dev guide here.](dev-guide.md) 
+## Roadmap & Docs
+- Find the status of planned features and known bugs [**in the roadmap**](https://xiuyuan.notion.site/d169967379394018910fe6895ce84d29?v=528a6fd0d7064d83b19dbc814af78b26).
+- Find the [dev docs here.](dev-guide.md)
+
 ## Installation
 - To get a build of the extension:
   - Run intellij/buildPlugin using Gradle
