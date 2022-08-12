@@ -35,83 +35,23 @@ public class NoteDocumentListener implements DocumentListener {
         this.noteToolWindow = noteToolWindow;
     }
 
+    /** executes after every insertion in the doc */
     public void insertUpdate(DocumentEvent e) {
-        System.out.println(e);
+        //System.out.println(e);
         hidePopup();
         autoLink(e);
         noteToolWindow.saveNote();
     }
 
+    //Not used
     public void removeUpdate(DocumentEvent e) {
-        System.out.println(e);
+        //System.out.println(e);
     }
-
+    //Not used
     public void changedUpdate(DocumentEvent e) {
         //Plain text components do not fire these events
     }
 
-    private void popUp(HashSet<PsiMethod> foundMethods, int start, HTMLDocument doc) {
-        pm = new JPopupMenu("Autocomplete");
-        JTextPane textPane = noteToolWindow.getNotePanel();
-        for (PsiMethod method : foundMethods) {
-            ArrayList<String> params = new ArrayList<>();
-            for (PsiParameter param : method.getParameterList().getParameters()) {
-                params.add(param.getType().getCanonicalText());
-            }
-
-            String locId = method.getContainingClass().getQualifiedName() + "." + method.getName() + "#" + String.join(",", params);
-            JMenuItem menuItem = new JMenuItem(locId);
-            menuItem.addChangeListener(new ChangeListener() {
-                @Override
-                public void stateChanged(ChangeEvent e) {
-                    selectedItem = getSelected(pm);
-                }
-            });
-            menuItem.addActionListener(e -> createLink(start, method, method.getName(), doc));
-            pm.add(menuItem);
-        }
-        if (foundMethods.isEmpty()) {
-            JMenuItem menuItem = new JMenuItem("No methods found.");
-            pm.add(menuItem);
-        }
-
-        // add the popup to the frame
-        int offset = textPane.getCaretPosition();
-        // for displacing the popUp window
-        int fontSize = textPane.getFont().getSize();
-        try {
-            Rectangle2D r = textPane.modelToView2D(offset);
-            pm.show(noteToolWindow.getNotePanel(), (int)r.getX(), (int)r.getY() + 3*fontSize/2);
-            noteToolWindow.getNotePanel().requestFocusInWindow();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void select() {
-        if (selectedItem != null) {
-            selectedItem.doClick();
-        }
-    }
-    public static JMenuItem getSelected(JPopupMenu menu) {
-        int itemCount = menu.getComponentCount();
-        for (int i = 0; i < itemCount; i++) {
-            Component component = menu.getComponent(i);
-            if (menu.getComponent(i) instanceof JMenuItem) {
-                JMenuItem currItem = (JMenuItem) component;
-                if(currItem.isArmed()) {
-                    return currItem;
-                }
-            }
-        }
-        return null;
-    }
-
-    public void hidePopup() {
-        if (pm != null) {
-            pm.setVisible(false);
-        }
-    }
     /**
      * checks that the character entered by DocumentEvent e
      * is a whitespace character, and the word preceding that
@@ -157,7 +97,85 @@ public class NoteDocumentListener implements DocumentListener {
         SwingUtilities.invokeLater(autoLink);
     }
 
-    /** creates a link with loc-id text */
+
+    /**
+     * Creates the autocomplete popup
+     * @param foundMethods the found methods that the user can select from
+     * @param start the start of where the html link should be placed
+     * @param doc the doc where the html link should be inserted
+     */
+    private void popUp(HashSet<PsiMethod> foundMethods, int start, HTMLDocument doc) {
+        //instantiate the Autocomplete popup
+        pm = new JPopupMenu("Autocomplete");
+        JTextPane textPane = noteToolWindow.getNotePanel();
+
+        // add all found methods to the popup
+        for (PsiMethod method : foundMethods) {
+            ArrayList<String> params = new ArrayList<>();
+            for (PsiParameter param : method.getParameterList().getParameters()) {
+                params.add(param.getType().getCanonicalText());
+            }
+            String locId = method.getContainingClass().getQualifiedName() + "." + method.getName() + "#" + String.join(",", params);
+            JMenuItem menuItem = new JMenuItem(locId);
+            menuItem.addChangeListener(new ChangeListener() {
+                @Override
+                public void stateChanged(ChangeEvent e) {
+                    selectedItem = getSelected(pm);
+                }
+            });
+            menuItem.addActionListener(e -> createLink(start, method, method.getName(), doc));
+            pm.add(menuItem);
+        }
+        if (foundMethods.isEmpty()) {
+            JMenuItem menuItem = new JMenuItem("No methods found.");
+            pm.add(menuItem);
+        }
+        // add the popup to the frame
+        int offset = textPane.getCaretPosition();
+        // for displacing the popUp window
+        int fontSize = textPane.getFont().getSize();
+        try {
+            Rectangle2D r = textPane.modelToView2D(offset);
+            pm.show(noteToolWindow.getNotePanel(), (int)r.getX(), (int)r.getY() + 3*fontSize/2);
+            noteToolWindow.getNotePanel().requestFocusInWindow();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void select() {
+        if (selectedItem != null) {
+            selectedItem.doClick();
+        }
+    }
+
+    public static JMenuItem getSelected(JPopupMenu menu) {
+        int itemCount = menu.getComponentCount();
+        for (int i = 0; i < itemCount; i++) {
+            Component component = menu.getComponent(i);
+            if (menu.getComponent(i) instanceof JMenuItem) {
+                JMenuItem currItem = (JMenuItem) component;
+                if(currItem.isArmed()) {
+                    return currItem;
+                }
+            }
+        }
+        return null;
+    }
+
+    public void hidePopup() {
+        if (pm != null) {
+            pm.setVisible(false);
+        }
+    }
+
+    /**
+     * creates a link with loc-id attribute at a given starting location
+     * @param start the starting offset to put the link
+     * @param method the method you want to link to
+     * @param displayName the text to display in the text editor
+     * @param doc the doc to put the link in
+     */
     public void createLink(int start, PsiMethod method, String displayName, HTMLDocument doc) {
         noteToolWindow.setInProgress(true);
         HTMLEditorKit kit = (HTMLEditorKit) noteToolWindow.getNotePanel().getEditorKit();
@@ -189,6 +207,7 @@ public class NoteDocumentListener implements DocumentListener {
     /**
      * custom definition of a word to be any sequence of
      * characters that doesn't contain whitespace.
+     * @return starting location of the word at offset
      */
     public static int getBetterWordStart(JTextPane pane, int offset) {
         Document doc = pane.getDocument();

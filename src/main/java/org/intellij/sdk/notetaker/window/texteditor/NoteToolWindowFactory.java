@@ -29,7 +29,7 @@ public class NoteToolWindowFactory implements ToolWindowFactory {
         if (openTabs != null) {
             //openTabs.add(new NoteModel("test", ""));
             for (NoteModel note : openTabs) {
-                NoteWindow noteWindow = new NoteWindow(toolWindow, project, note);
+                NoteWindow noteWindow = new NoteWindow(project, note);
                 Content noteTab = contentFactory.createContent(noteWindow.getContent(), note.getName(), false);
                 cm.addContent(noteTab);
             }
@@ -39,7 +39,10 @@ public class NoteToolWindowFactory implements ToolWindowFactory {
         cm.addContentManagerListener(tabStorageManager(manager));
     }
 
-    /** responsible for detecting when open tabs are changed in the content manager */
+    /**
+     * responsible for detecting when open tabs are changed in the content manager
+     * and updating storage
+     * */
     public ContentManagerListener tabStorageManager(NoteStorageManager manager) {
         return new ContentManagerListener() {
             @Override

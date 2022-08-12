@@ -26,6 +26,10 @@ import java.util.Iterator;
 import static java.awt.event.KeyEvent.VK_RIGHT;
 import static java.awt.event.KeyEvent.VK_SPACE;
 
+/**
+ * Text Editor window for a single note, represented by a NoteModel.
+ * GUI done in NoteWindow.form
+ */
 public class NoteWindow {
     private JTextPane NotePanel;
     private JPanel NotePanelContent;
@@ -41,20 +45,11 @@ public class NoteWindow {
     private HashMap<String, MethodWrapper> links;
 
     /**
-     * Sets up instance vars
-     * project
-     * manager (for saves)
-     *      - loading saves
-     * editorKit
-     * styling
-     * defaultstyle
-     * doc
-     *
-     * KeyListener (for escaping hyperlinks)
-     * HyperLinkListener
-     * DocParser (for finding links)
-     * */
-    public NoteWindow(ToolWindow toolWindow, Project project, NoteModel model) {
+     * Creates instance of NoteWindow, sets the styling and loads the NoteModel into the window.
+     * @param project the project that this NoteWindow works on
+     * @param model the NoteModel that this window edits
+     */
+    public NoteWindow(Project project, NoteModel model) {
         this.project = project;
         this.model = model;
         HTMLEditorKit kit = new CustomHTMLEditorKit();
@@ -76,7 +71,7 @@ public class NoteWindow {
         StyleSheet css = kit.getStyleSheet();
         css.addRule("a { color: " + rgb + ";}");
 
-        // load existing note if it exists
+        // load note into text editor
         NotePanel.setText(model.getContent());
         links = new HashMap<>();
         doc = NotePanel.getStyledDocument();
@@ -97,7 +92,7 @@ public class NoteWindow {
         return NotePanelContent;
     }
 
-    /** getters & setters */
+    /* getters & setters */
     public boolean isInProgress() {
         return isInProgress;
     }
@@ -114,7 +109,7 @@ public class NoteWindow {
         return links;
     }
 
-    /** on link click, go to loc-id */
+    /** activated on any link click and navigates focus to loc-id, if present*/
     public HyperlinkListener getLinkListener() {
         HyperlinkListener listener = new HyperlinkListener() {
             public void hyperlinkUpdate (HyperlinkEvent e){
@@ -156,8 +151,11 @@ public class NoteWindow {
             }
         };
     }
-    /** currently just adds a space at the end of the link https://stackoverflow.com/a/12046827
-     * only works if you're at the end of the document.*/
+    /**
+     * currently just adds a space at the end of the link https://stackoverflow.com/a/12046827.
+     * only works if you're at the end of the document. helps the user escape link formatting
+     * while in the text editor
+     * */
     public void escapeLink() {
         int caretPos = NotePanel.getCaretPosition();
         Element elem = doc.getParagraphElement(caretPos);
@@ -174,7 +172,12 @@ public class NoteWindow {
         }
     }
 
-
+    /**
+     * Searches for a Method in the porject based on a given locId
+     * @param locId the method signature to look for
+     * @return the MethodWrapper corresponding to the locId, else
+     * null if locId doesn't correspond to a method
+     */
     public MethodWrapper findIndividualMethod(String locId) {
         String enclosingClass = "";
         String methodName = "";

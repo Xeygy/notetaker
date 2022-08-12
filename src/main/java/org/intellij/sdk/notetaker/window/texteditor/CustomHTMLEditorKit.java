@@ -55,7 +55,7 @@ public class CustomHTMLEditorKit extends HTMLEditorKit {
             //Original checks for !isEditable, isEnabled, and isLeftMouse
             if (editor.isEditable() && SwingUtilities.isLeftMouseButton(e)) {
                 if (e.getClickCount()==2) {
-                    editor.setEditable(false); //quick swap lol
+                    editor.setEditable(false); //quick swap
                     super.mouseClicked(e);
                     editor.setEditable(true);
                 }

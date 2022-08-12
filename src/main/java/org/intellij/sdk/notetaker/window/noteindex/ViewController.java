@@ -96,7 +96,7 @@ public class ViewController {
             Content existingNote = cm.findContent(newNote.getName());
             // note not already open in NoteWindow
             if (existingNote == null) {
-                NoteWindow noteWindow = new NoteWindow(toolWindow, project, newNote);
+                NoteWindow noteWindow = new NoteWindow(project, newNote);
                 Content noteTab = contentFactory.createContent(noteWindow.getContent(), newNote.getName(), false);
                 cm.addContent(noteTab);
             }
@@ -145,7 +145,6 @@ public class ViewController {
 
         }
 
-    /**  */
     /**
      * assumes display names are unique, returns first matching content it finds,
      * null otherwise

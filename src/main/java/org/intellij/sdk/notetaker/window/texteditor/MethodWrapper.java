@@ -7,6 +7,9 @@ import com.intellij.psi.PsiParameter;
 
 import java.util.ArrayList;
 
+/**
+ * Wrapper that provides utility methods for the provided PsiMethod
+ */
 public class MethodWrapper implements java.io.Serializable {
     private final PsiMethod method;
 
@@ -14,6 +17,9 @@ public class MethodWrapper implements java.io.Serializable {
         this.method = method;
     }
 
+    /**
+     * @return the full method signature of the PsiMethod
+     */
     public String getLocId() {
         ArrayList<String> params = new ArrayList<>();
         for (PsiParameter param : method.getParameterList().getParameters()) {
@@ -26,6 +32,9 @@ public class MethodWrapper implements java.io.Serializable {
         return this.getLocId().equals(locId);
     }
 
+    /**
+     * changes the user focus to highlight the method declaration.
+     */
     public void goToMethod() {
         PsiElement navigationElement = method.getNavigationElement();
         if (navigationElement instanceof Navigatable && ((Navigatable) navigationElement).canNavigate())
