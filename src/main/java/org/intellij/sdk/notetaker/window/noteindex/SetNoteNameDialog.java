@@ -10,12 +10,18 @@ import java.awt.*;
 import java.util.List;
 import java.util.stream.Collectors;
 
-/** Dialog popup for naming notes */
+/** Dialog popup for naming notes, prevents the user from entering
+ * any names that already belong to an existing note. */
 public class SetNoteNameDialog extends DialogWrapper {
     private List<NoteModel> existingNotes;
 
     private JTextField nameField;
 
+    /**
+     * default dialog constructor, popup title is "Set Name"
+     * @param existingNotes existing notes that the dialog will
+     *                      check to prevent duplicate names
+     */
     public SetNoteNameDialog(List<NoteModel> existingNotes) {
         this(existingNotes, "Set Name");
     }
@@ -27,11 +33,14 @@ public class SetNoteNameDialog extends DialogWrapper {
         init();
     }
 
-    /** for getting entered value */
+    /** for getting value entered into dialog */
     public String getFieldValue() {
         return nameField.getText();
     }
 
+    /** validation settings for the popup
+     * @return null if valid, ValidationInfo with reason if invalid
+     */
     @Override
     protected @org.jetbrains.annotations.Nullable ValidationInfo doValidate() {
         String name = nameField.getText();
@@ -52,6 +61,9 @@ public class SetNoteNameDialog extends DialogWrapper {
         return null;
     }
 
+    /**
+     * The UI component of the popup.
+     */
     @Nullable
     @Override
     protected JComponent createCenterPanel() {

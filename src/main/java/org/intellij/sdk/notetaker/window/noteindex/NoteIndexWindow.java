@@ -11,11 +11,18 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.ArrayList;
 
+/**
+ * Class responsible for creating the JComponent that
+ * will be displayed in the Note Index Tool Window
+ */
 public class NoteIndexWindow {
     private ViewController viewController;
-
     NoteStorageManager storageManager;
 
+    /**
+     * instantiate the window for the given project
+     * @param project the project you want to view the NoteIndexWindow of
+     */
     public NoteIndexWindow(Project project) {
         storageManager = new NoteStorageManager(project);
 
@@ -27,6 +34,9 @@ public class NoteIndexWindow {
         viewController = new ViewController(storageManager.getNoteList(), project);
     }
 
+    /**
+     * @return JComponent that shows the NoteIndexWindow
+     */
     public JComponent getComponent() {
         viewController.getListView().addMouseListener(clickListener());
 
@@ -40,11 +50,11 @@ public class NoteIndexWindow {
         return decorator.createPanel();
     }
 
-    public MouseListener clickListener() {
+    private MouseListener clickListener() {
         MouseListener l = new MouseAdapter() {
             public void mouseClicked(MouseEvent evt) {
                 if (evt.getClickCount() == 2) {
-                    // Double-click detected
+                    // open note on double click
                     viewController.openSelectedNote();
                 }
             }

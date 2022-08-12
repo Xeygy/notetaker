@@ -43,7 +43,7 @@ to serialize `NoteModelStorage`.
 
 #### `NoteStorageManager`
 - is the interface by which we interact with storage
-- essentially a singleton to get access to the stored note list
+- a class to get access to the stored note list
 or stored open tabs
 
 #### `NoteStorageState` 

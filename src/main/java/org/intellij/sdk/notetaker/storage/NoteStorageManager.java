@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * A singleton to get access to the stored state of notetaker
+ * A class to get access to the stored state of notetaker
  * for a given project. Allows you to save and load stored data.
  */
 public class NoteStorageManager {

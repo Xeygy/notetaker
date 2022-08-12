@@ -13,18 +13,21 @@ import org.intellij.sdk.notetaker.window.texteditor.NoteWindow;
 
 import java.util.List;
 
-/** Class for updating the window in AddRemoveToolWindow and NoteWindow */
+/** Class for updating the window in NoteIndexWindow and NoteWindow */
 public class ViewController {
-    //Model & View for AddRemoveToolWindow
+    //Model & View for NoteIndexWindow
     private JBList<NoteModel> listView;
     private CollectionListModel<NoteModel> listModel;
 
     //Actual list that gets saved in storage
     private List<NoteModel> storedList;
-
     private Project project;
 
-    // noteList is not null
+    /**
+     * Class for updating the window in NoteIndexWindow and NoteWindow.
+     * @param noteList all the notes in the project
+     * @param project the project that this ViewController works on.
+     */
     public ViewController(List<NoteModel> noteList, Project project) {
         this.storedList = noteList;
         this.project = project;
@@ -41,6 +44,7 @@ public class ViewController {
         if (dialog.showAndGet()) {
             String newNoteName = dialog.getFieldValue();
             NoteModel newNote = new NoteModel(newNoteName, "");
+
             listModel.add(newNote);
             storedList.add(newNote);
             addToNoteWindow(newNote);
@@ -62,9 +66,9 @@ public class ViewController {
             SetNoteNameDialog dialog = new SetNoteNameDialog(storedList, "Rename");
             if (dialog.showAndGet()) {
                 String newName = dialog.getFieldValue();
+
                 renameInNoteWindow(storedList.get(selectedIndex), newName);
                 listModel.getElementAt(selectedIndex).setName(newName);
-                //storedList.remove(selectedIndex); not needed, noteModel is same instance
             }
         }
     }
@@ -76,7 +80,13 @@ public class ViewController {
         }
     }
 
-    /** methods for updating the NoteWindow ToolWindow */
+    /* methods for updating the NoteWindow ToolWindow */
+
+    /**
+     * Adds given NoteModel to NoteWindow and changes focus to that NoteModel in
+     * NoteWindow
+     * @param newNote the note to add
+     */
     public void addToNoteWindow(NoteModel newNote) {
         ToolWindow toolWindow = ToolWindowManager.getInstance(project).getToolWindow("Notetaker");
         if (toolWindow != null) {
@@ -116,8 +126,10 @@ public class ViewController {
         }
     }
 
-    /** TODO: RequestFocus DOES NOT WORK
-     * changes focus only if a tab with the same name as the note is in the noteWindow */
+    /**
+     * changes focus only if a tab with the same name as the note is in the noteWindow
+     *  @param note the note to change focus to
+     *  */
     public void changeFocusToNoteWindow(NoteModel note) {
         ToolWindow toolWindow = ToolWindowManager.getInstance(project).getToolWindow("Notetaker");
         if (toolWindow != null) {
@@ -132,8 +144,16 @@ public class ViewController {
         }
 
         }
-    /** assumes display names are unique, returns first matching content it finds,
-     * null otherwise */
+
+    /**  */
+    /**
+     * assumes display names are unique, returns first matching content it finds,
+     * null otherwise
+     * @param cm ContentManager for NoteWIndow
+     * @param name Name of the tab you want to find
+     * @return first matching content it finds,
+     * null otherwise
+     */
     public Content findContentWithDisplayName(ContentManager cm, String name) {
         Content[] contents = cm.getContents();
         for (Content content : contents) {
