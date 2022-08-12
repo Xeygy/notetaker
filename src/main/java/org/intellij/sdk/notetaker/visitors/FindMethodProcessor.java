@@ -20,16 +20,16 @@ import java.util.HashSet;
 
 public class FindMethodProcessor implements Processor {
 
-    private final String methodName;
+    private final String prefix;
     private final HashSet<PsiMethod> foundMethods;
     private final Project project;
 
     /** a processor for PsiFiles that finds all instances
      * of a method with a given method name
-     * @param methodName the method name to look for
+     * @param prefix the method name to look for
      */
-    public FindMethodProcessor(String methodName, Project project) {
-        this.methodName = methodName;
+    public FindMethodProcessor(String prefix, Project project) {
+        this.prefix = prefix;
         this.foundMethods = new HashSet<>();
         this.project = project;
     }
@@ -41,7 +41,7 @@ public class FindMethodProcessor implements Processor {
 
     @Override
     public boolean process(Object o) {
-        FindMethodVisitor visitor = new FindMethodVisitor(methodName, foundMethods);
+        FindMethodVisitor visitor = new FindMethodVisitor(prefix, foundMethods);
         if (o instanceof VirtualFile) {
             VirtualFile vf = ((VirtualFile)o);
             PsiFile pf = PsiManager.getInstance(project).findFile(vf);

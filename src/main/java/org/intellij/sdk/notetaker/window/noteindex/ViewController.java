@@ -1,4 +1,4 @@
-package org.intellij.sdk.notetaker.window.notemanager;
+package org.intellij.sdk.notetaker.window.noteindex;
 
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.wm.ToolWindow;
@@ -9,16 +9,12 @@ import com.intellij.ui.content.Content;
 import com.intellij.ui.content.ContentFactory;
 import com.intellij.ui.content.ContentManager;
 import org.intellij.sdk.notetaker.storage.NoteModel;
-import org.intellij.sdk.notetaker.window.notemanager.SetNameNoteDialog;
 import org.intellij.sdk.notetaker.window.texteditor.NoteWindow;
 
-import javax.swing.*;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.util.List;
 
 /** Class for updating the window in AddRemoveToolWindow and NoteWindow */
-public class ViewManager {
+public class ViewController {
     //Model & View for AddRemoveToolWindow
     private JBList<NoteModel> listView;
     private CollectionListModel<NoteModel> listModel;
@@ -29,23 +25,11 @@ public class ViewManager {
     private Project project;
 
     // noteList is not null
-    public ViewManager(List<NoteModel> noteList, Project project) {
+    public ViewController(List<NoteModel> noteList, Project project) {
         this.storedList = noteList;
         this.project = project;
         listModel = new CollectionListModel<>(noteList);
         listView = new JBList<>(listModel);
-        listView.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mousePressed(MouseEvent e) {
-                if (SwingUtilities.isRightMouseButton(e)) {
-                    SetNameNoteDialog dialog = new SetNameNoteDialog(storedList);
-                    if (dialog.showAndGet()) {
-                        // user pressed OK
-                        String newNoteName = dialog.getFieldValue();
-                    }
-                }
-            }
-        });
     }
 
     public JBList<NoteModel> getListView() {
@@ -53,7 +37,7 @@ public class ViewManager {
     }
 
     public void addNote() {
-        SetNameNoteDialog dialog = new SetNameNoteDialog(storedList, "New Note Name");
+        SetNoteNameDialog dialog = new SetNoteNameDialog(storedList, "New Note Name");
         if (dialog.showAndGet()) {
             String newNoteName = dialog.getFieldValue();
             NoteModel newNote = new NoteModel(newNoteName, "");
@@ -75,7 +59,7 @@ public class ViewManager {
     public void renameSelectedNote() {
         int selectedIndex = listView.getSelectedIndex();
         if (selectedIndex > -1) {
-            SetNameNoteDialog dialog = new SetNameNoteDialog(storedList, "Rename");
+            SetNoteNameDialog dialog = new SetNoteNameDialog(storedList, "Rename");
             if (dialog.showAndGet()) {
                 String newName = dialog.getFieldValue();
                 renameInNoteWindow(storedList.get(selectedIndex), newName);

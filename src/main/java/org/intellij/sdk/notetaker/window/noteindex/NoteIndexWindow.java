@@ -1,4 +1,4 @@
-package org.intellij.sdk.notetaker.window.notemanager;
+package org.intellij.sdk.notetaker.window.noteindex;
 
 import com.intellij.openapi.project.Project;
 import com.intellij.ui.ToolbarDecorator;
@@ -11,12 +11,12 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.ArrayList;
 
-public class AddRemoveWindow {
-    private ViewManager viewManager;
+public class NoteIndexWindow {
+    private ViewController viewController;
 
     NoteStorageManager storageManager;
 
-    public AddRemoveWindow(Project project) {
+    public NoteIndexWindow(Project project) {
         storageManager = new NoteStorageManager(project);
 
         //null check if first time using app
@@ -24,13 +24,13 @@ public class AddRemoveWindow {
             ArrayList<NoteModel> newList = new ArrayList<>();
             storageManager.setNoteList(newList);
         }
-        viewManager = new ViewManager(storageManager.getNoteList(), project);
+        viewController = new ViewController(storageManager.getNoteList(), project);
     }
 
     public JComponent getComponent() {
-        viewManager.getListView().addMouseListener(clickListener());
+        viewController.getListView().addMouseListener(clickListener());
 
-        ToolbarDecorator decorator = ToolbarDecorator.createDecorator(viewManager.getListView());
+        ToolbarDecorator decorator = ToolbarDecorator.createDecorator(viewController.getListView());
         decorator.setAddAction(button -> addNoteAction());
         decorator.setRemoveAction(button -> removeNoteAction());
         decorator.setEditAction(button -> renameNoteAction());
@@ -45,7 +45,7 @@ public class AddRemoveWindow {
             public void mouseClicked(MouseEvent evt) {
                 if (evt.getClickCount() == 2) {
                     // Double-click detected
-                    viewManager.openSelectedNote();
+                    viewController.openSelectedNote();
                 }
             }
         };
@@ -53,13 +53,13 @@ public class AddRemoveWindow {
     }
 
     public void addNoteAction() {
-        viewManager.addNote();
+        viewController.addNote();
     }
     public void removeNoteAction() {
-        viewManager.removeSelectedNote();
+        viewController.removeSelectedNote();
     }
     public void renameNoteAction() {
-        viewManager.renameSelectedNote();
+        viewController.renameSelectedNote();
     }
 
 }

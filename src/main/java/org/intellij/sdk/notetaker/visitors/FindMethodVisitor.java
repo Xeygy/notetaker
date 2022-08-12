@@ -9,8 +9,8 @@ public class FindMethodVisitor extends JavaRecursiveElementVisitor {
     private String methodName;
     private HashSet<PsiMethod> foundMethods;
 
-    public FindMethodVisitor(String methodName, HashSet<PsiMethod> foundMethods) {
-        this.methodName = methodName;
+    public FindMethodVisitor(String prefix, HashSet<PsiMethod> foundMethods) {
+        this.methodName = prefix;
         this.foundMethods = foundMethods;
     }
 

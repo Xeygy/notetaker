@@ -1,4 +1,4 @@
-package org.intellij.sdk.notetaker.window.notemanager;
+package org.intellij.sdk.notetaker.window.noteindex;
 
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.ui.ValidationInfo;
@@ -11,16 +11,16 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /** Dialog popup for naming notes */
-public class SetNameNoteDialog extends DialogWrapper {
+public class SetNoteNameDialog extends DialogWrapper {
     private List<NoteModel> existingNotes;
 
     private JTextField nameField;
 
-    public SetNameNoteDialog(List<NoteModel> existingNotes) {
+    public SetNoteNameDialog(List<NoteModel> existingNotes) {
         this(existingNotes, "Set Name");
     }
 
-    public SetNameNoteDialog(List<NoteModel> existingNotes, String dialogTitle) {
+    public SetNoteNameDialog(List<NoteModel> existingNotes, String dialogTitle) {
         super(true); // use current window as parent
         this.existingNotes = existingNotes;
         setTitle(dialogTitle);

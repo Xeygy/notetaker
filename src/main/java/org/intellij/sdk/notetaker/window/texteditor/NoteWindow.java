@@ -17,6 +17,7 @@ import javax.swing.text.html.HTML;
 import javax.swing.text.html.HTMLEditorKit;
 import javax.swing.text.html.StyleSheet;
 import java.awt.*;
+import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.HashMap;
@@ -140,10 +141,7 @@ public class NoteWindow {
     }
 
     public KeyListener getKeyListener() {
-        return new KeyListener() {
-            @Override
-            public void keyTyped(KeyEvent e) {
-            }
+        return new KeyAdapter() {
 
             @Override
             public void keyPressed(KeyEvent e) {
@@ -155,11 +153,6 @@ public class NoteWindow {
                 if (e.getKeyCode() == VK_SPACE) {
                     docListener.select();
                 }
-            }
-
-            @Override
-            public void keyReleased(KeyEvent e) {
-
             }
         };
     }

@@ -5,6 +5,9 @@ import com.intellij.openapi.project.Project;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * hello
+ */
 public class NoteStorageManager {
     private final NoteStorageState storageState;
 
@@ -12,6 +15,10 @@ public class NoteStorageManager {
         storageState = project.getService(NoteStorageState.class);
     }
 
+    /**
+     *
+     * @return g
+     */
     public List<NoteModel> getNoteList() {
         if (storageState.getNoteModelStorage() == null) {
             return null;
