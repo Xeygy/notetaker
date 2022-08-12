@@ -1,11 +1,16 @@
 # Dev Docs
 Last updated 8/12/22
 ## Quick Start
-- Want to **Persist Something?** -- add it to `storage/NoteStorageState` and 
-access it through an instance of `NoteStorageManager`
-- Want to **Add Text Editor Features?** -- change NotePanel inside 
-`window/texteditor/NoteWindow.java`
-
+- Clone the project with IntelliJ and click 'Run Plugin' to try an instance of 
+extension
+- Want to **Persist Something?** — add it to 
+[`NoteStorageState.java`](src/main/java/org/intellij/sdk/notetaker/storage/NoteStorageState.java)
+and access it through an instance of `NoteStorageManager`
+- Want to **Add Text Editor Features?** — look at editing `NotePanel` inside 
+[`NoteWindow.java`](src/main/java/org/intellij/sdk/notetaker/window/texteditor/NoteWindow.java)
+- Want to **Extend Linking Features?** — look at `autoLink()` in 
+[`NoteDocumentListener.java`](src/main/java/org/intellij/sdk/notetaker/window/texteditor/NoteDocumentListener.java)
+and creating your own visitors.
 
 ## Project Structure
 The main extension code is stored inside 
