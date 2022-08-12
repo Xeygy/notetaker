@@ -9,12 +9,24 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+/**
+ * visitor that finds methods with the given method signature and puts them in to a
+ * given HashSet foundMethods.
+ */
 public class FindIndividualMethodVisitor extends JavaRecursiveElementVisitor {
     private final String methodName;
     private final String params;
     private final String enclosingClass;
     private HashSet<PsiMethod> foundMethods;
 
+    /**
+     * Creates visitor that finds methods with the given method signature and puts them in to a
+     * given HashSet foundMethods.
+     * @param enclosingClass the full path of the containing class (PsiMethod.getContainingClass().getQualifiedName())
+     * @param methodName the name of the method
+     * @param params the parameter types (param.getType().getCanonicalText()) separated by commas
+     * @param foundMethods the HashSet you want updated with the found methods
+     */
     public FindIndividualMethodVisitor(String enclosingClass, String methodName, String params, HashSet<PsiMethod> foundMethods) {
         this.enclosingClass = enclosingClass;
         this.methodName = methodName;

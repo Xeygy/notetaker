@@ -17,16 +17,23 @@ import com.intellij.util.Processor;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashSet;
-
+/**
+ * A processor for PsiFiles that finds all methods
+ * starting with a given prefix.
+ * Call runProcessor() to search the given project.
+ */
 public class FindMethodProcessor implements Processor {
 
     private final String prefix;
     private final HashSet<PsiMethod> foundMethods;
     private final Project project;
 
-    /** a processor for PsiFiles that finds all instances
-     * of a method with a given method name
-     * @param prefix the method name to look for
+    /**
+     * A processor for PsiFiles that finds all methods
+     * starting with a given prefix.
+     * Call runProcessor() to search the given project.
+     * @param prefix the prefix to search for
+     * @param project the project you want to search through
      */
     public FindMethodProcessor(String prefix, Project project) {
         this.prefix = prefix;
@@ -34,7 +41,10 @@ public class FindMethodProcessor implements Processor {
         this.project = project;
     }
 
-
+    /**
+     * Must call runProcessor() first
+     * @return the found methods
+     */
     public HashSet<PsiMethod> getFoundMethods() {
         return foundMethods;
     }
@@ -83,6 +93,10 @@ public class FindMethodProcessor implements Processor {
         }
     }
 
+    /**
+     * searches all modules in the project for methods with
+     * the provided prefix
+     */
     public void runProcessor() {
         Module @NotNull [] modules = ModuleManager.getInstance(project).getModules();
         GlobalSearchScope scope = null;

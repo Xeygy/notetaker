@@ -18,6 +18,11 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.HashSet;
 
+/**
+ * A processor for PsiFiles that finds all instances
+ * of a method with a given method signature.
+ * Call runProcessor() to search the given project.
+ */
 public class FindIndividualMethodProcessor implements Processor {
 
     private final String methodName;
@@ -26,9 +31,14 @@ public class FindIndividualMethodProcessor implements Processor {
     private final HashSet<PsiMethod> foundMethods;
     private final Project project;
 
-    /** a processor for PsiFiles that finds all instances
-     * of a method with a given method name
-     * @param methodName the method name to look for
+    /**
+     * A processor for PsiFiles that finds all instances
+     * of a method with a given method signature.
+     * Call runProcessor() to search the given project.
+     * @param enclosingClass the full path of the containing class (PsiMethod.getContainingClass().getQualifiedName())
+     * @param methodName the name of the method
+     * @param params the parameter types (param.getType().getCanonicalText()) separated by commas
+     * @param project the project you want to search through
      */
     public FindIndividualMethodProcessor(String enclosingClass, String methodName, String params, Project project) {
         this.enclosingClass = enclosingClass;
@@ -38,7 +48,10 @@ public class FindIndividualMethodProcessor implements Processor {
         this.project = project;
     }
 
-
+    /**
+     * Must call runProcessor() first
+     * @return the found methods
+     */
     public HashSet<PsiMethod> getFoundMethods() {
         return foundMethods;
     }
@@ -87,6 +100,9 @@ public class FindIndividualMethodProcessor implements Processor {
         }
     }
 
+    /**
+     * searches all modules in the project for the provided method signature.
+     */
     public void runProcessor() {
         Module @NotNull [] modules = ModuleManager.getInstance(project).getModules();
         GlobalSearchScope scope = null;
