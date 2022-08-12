@@ -2,7 +2,11 @@ package org.intellij.sdk.notetaker.storage;
 
 import java.util.List;
 
-/** Class used for serialization */
+/** Wrapper class used for serializing a List of NoteModels.
+ * Should be replaced as GSON can handle a list of
+ * Objects just fine -- NoteModelStorageConverter
+ * should be changed into NoteModelListConverter
+ * @see NoteModelStorageConverter*/
 public class NoteModelStorage {
     private List<NoteModel> noteList;
 

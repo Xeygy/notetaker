@@ -5,6 +5,11 @@ import com.intellij.util.xmlb.Converter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+/** converter for serializing NoteModelStorage, should eventually
+ * be changed to NoteModelListConverter & remove NoteModelStorage, as GSON can convert Lists
+ * just fine, we don't need a wrapper around the List.
+ */
+
 public class NoteModelStorageConverter extends Converter<NoteModelStorage> {
     private final Gson jsonParser;
 
