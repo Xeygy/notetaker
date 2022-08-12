@@ -5,6 +5,7 @@ import com.intellij.psi.PsiMethod;
 
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -24,12 +25,12 @@ public class FindIndividualMethodVisitor extends JavaRecursiveElementVisitor {
     @Override
     public void visitMethod(PsiMethod method) {
         super.visitMethod(method);
-        Set<String> currParamSet = Arrays.stream(method.getParameterList().getParameters())
+        List<String> currParamSet = Arrays.stream(method.getParameterList().getParameters())
                 .map(param -> param.getType().getCanonicalText())
-                .collect(Collectors.toSet());
+                .collect(Collectors.toList());
         // must check that params isn't empty, otherwise set will contain an empty string
         String[] targetParamArr = params.equals("") ? new String[0] : params.split(",");
-        Set<String> targetParamSet = Arrays.stream(targetParamArr).collect(Collectors.toSet());
+        List<String> targetParamSet = Arrays.stream(targetParamArr).collect(Collectors.toList());
 
         boolean targetFound = method.getContainingClass().getQualifiedName().equals(enclosingClass) &&
                 method.getName().equals(methodName) &&
