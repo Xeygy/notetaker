@@ -1,3 +1,12 @@
+# Dev Docs
+Last updated 8/12/22
+## Quick Start
+- Want to **Persist Something?** -- add it to `storage/NoteStorageState` and 
+access it through an instance of `NoteStorageManager`
+- Want to **Add Text Editor Features?** -- change NotePanel inside 
+`window/texteditor/NoteWindow.java`
+
+
 ## Project Structure
 The main extension code is stored inside 
 `src/main/java/org/intellij/sdk/notetaker/`.  
@@ -9,6 +18,7 @@ representing Notetaker state
 finding method declarations from links
 - `window/`, which holds all the code relating to the UI
 
+## Docs
 ### Storage
 #### `NoteModel`
 - is the model of a note stored in the system
@@ -44,3 +54,66 @@ between IDE Restarts
   - enums
 - to support persistence of other classes, you need to write a converter 
 (i.e. [NoteModelStorageConverter](#notemodelstorageconverter--notemodelstorage))
+
+### Visitors
+To search for through the entire project, you need to use `Processors` and
+`Visitors`. `Processors` traverse through the project structure and process
+files. `Visitors` traversw through individual files' Abstract Syntax Trees. 
+
+[**PSI**](https://plugins.jetbrains.com/docs/intellij/psi.html) is IntelliJ's way 
+of [providing an AST](https://groups.google.com/g/lint-dev/c/ss18JfF7_hk/m/G8v_QLzdBQAJ)
+representation to the user.
+
+#### `FindIndividualMethodVisitor` & `FindIndividualMethodProcessor`
+- Finds a method based on its method signature: enclosingClass, methodName, & params.
+- Used to navigate unambiguously to the right method specified by a link.
+
+#### `FindMethodVisitor` & `FindMethodProcessor`
+- Finds methods whose names start with a given prefix
+- Used for autocomplete
+
+### Window
+There are two windows in notetaker, a note index (file system manager) 
+and a text editor for actual typing.
+
+#### Note Index
+##### `NoteIndexToolWindowFactory`
+- ToolWindowFactory is the interface that IntelliJ uses to show the tool window.
+- ["When the user clicks on the tool window button, the createToolWindowContent() 
+method of the factory class is called"](https://plugins.jetbrains.com/docs/intellij/tool-windows.html#programmatic-setup)
+
+##### `NoteIndexWindow`
+- Java Swing UI to show all stored notes.
+- Uses a [ToolbarDecorator](https://plugins.jetbrains.com/docs/intellij/lists-and-trees.html#toolbardecorator)
+for the add/delete/edit actions
+- Actions implemented in `ViewManager`
+
+##### `SetNoteNameDialog`
+- Creates a popup dialog that asks for a text input, used for setting note names.
+
+##### `ViewController`
+- Responsible for coordinating the view between the text editor and the note index when
+notes are added/removed/renamed
+
+#### Text Editor
+##### `CustomHTMLEditorKit`
+- An extension of the built in HTMLEditorKit that allows hyperlinks to
+be clickable with double-click while JTextPane is editable
+
+##### `MethodWrapper`
+- A utility class around `PsiMethod` for getting the method signature and
+navigating to method
+
+##### `NoteDocumentListener`
+- Responsible for:
+  - Saving the note every insert
+  - Checking to see if the user wants to insert a link with \{
+
+###### `NoteToolWindowFactory`
+- Responsible for showing all open tabs at the time
+- Contains a `ContentManagerListener` which updates which notes are
+open in the tab.
+
+###### `NoteWindow`
+- Handles creating the UI for the text editor and styling a given `NoteModel`
+- Handles link clicking and link escaping
